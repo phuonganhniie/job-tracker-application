@@ -102,13 +102,32 @@ cd job-tracker-application
 ```
 
 ### 2. Cài đặt dependencies
+#### 🔹 macOS / Linux
+```bash
+# Tạo virtual environment
+python3 -m venv venv
+
+# Kích hoạt virtual environment
+source venv/bin/activate
+
+# Cài đặt packages
+pip install -r requirements.txt
+```
+#### 🔹 Windows
 
 ```powershell
 # Tạo virtual environment
 python -m venv venv
 
-# Kích hoạt virtual environment
-.\venv\Scripts\Activate.ps1
+# Kích hoạt virtual environment (chọn một trong 3)
+# -> PowerShell
+.\venv\Scripts\Activate.ps1 
+
+# -> CMD
+venv\Scripts\activate.bat
+
+# -> Git bash
+source venv/Scripts/activate
 
 # Cài đặt packages
 pip install -r requirements.txt
@@ -135,9 +154,8 @@ python scripts/seed_db.py
 
 ### 5. Chạy Backend API
 
-```powershell
-cd backend
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```git bash
+uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Backend sẽ chạy tại: `http://localhost:8000`
@@ -146,9 +164,8 @@ Backend sẽ chạy tại: `http://localhost:8000`
 
 ### 6. Chạy Frontend (Terminal mới)
 
-```powershell
-cd frontend
-streamlit run app.py
+```git bash
+PYTHONPATH=$(pwd) streamlit run frontend/app.py
 ```
 
 Frontend sẽ chạy tại: `http://localhost:8501`
