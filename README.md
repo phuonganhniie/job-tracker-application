@@ -94,21 +94,65 @@ job-tracker-application/
 
 ## 🚀 Cài đặt và chạy
 
+> **⚠️ Yêu cầu:** Python 3.11+ (khuyến nghị Python 3.11 để đảm bảo ổn định khi cài đặt dependencies)
+
 ### 1. Clone repository
 
-```powershell
+```bash
 git clone <repository-url>
 cd job-tracker-application
 ```
 
 ### 2. Cài đặt dependencies
 
+#### 🍎 macOS / Linux
+
+```bash
+# Kiểm tra phiên bản Python (cần 3.11+)
+python3 --version
+
+# Tạo virtual environment
+python3 -m venv venv
+
+# Kích hoạt virtual environment
+source venv/bin/activate
+
+# Cài đặt packages
+pip install -r requirements.txt
+```
+
+#### 🪟 Windows
+
+##### Option 1: PowerShell
+
 ```powershell
+# Kiểm tra phiên bản Python (cần 3.11+)
+python --version
+
 # Tạo virtual environment
 python -m venv venv
 
 # Kích hoạt virtual environment
 .\venv\Scripts\Activate.ps1
+
+# Nếu gặp lỗi ExecutionPolicy, chạy lệnh sau (chỉ cần 1 lần):
+# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Cài đặt packages
+pip install -r requirements.txt
+```
+
+##### Option 2: Git Bash
+
+```bash
+# Kiểm tra phiên bản Python (cần 3.11+)
+python --version
+
+# Tạo virtual environment
+python -m venv venv
+
+# Kích hoạt virtual environment
+source venv/Scripts/activate
 
 # Cài đặt packages
 pip install -r requirements.txt
@@ -116,16 +160,55 @@ pip install -r requirements.txt
 
 ### 3. Cấu hình environment
 
-```powershell
+#### macOS / Linux:
+```bash
 # Copy file .env.example thành .env
-copy .env.example .env
+cp .env.example .env
 
 # Chỉnh sửa .env nếu cần (mặc định dùng SQLite)
+nano .env  # hoặc vim, code, etc.
+```
+
+#### Windows (PowerShell):
+```powershell
+# Copy file .env.example thành .env
+Copy-Item .env.example .env
+
+# Chỉnh sửa .env nếu cần
+notepad .env  # hoặc code .env
+```
+
+#### Windows (Git Bash):
+```bash
+# Copy file .env.example thành .env
+cp .env.example .env
+
+# Chỉnh sửa .env nếu cần
+notepad .env  # hoặc vim, code .env
 ```
 
 ### 4. Khởi tạo database
 
+#### macOS / Linux:
+```bash
+# Tạo database và tables
+python scripts/init_db.py
+
+# (Optional) Seed dữ liệu mẫu
+python scripts/seed_db.py
+```
+
+#### Windows (PowerShell):
 ```powershell
+# Tạo database và tables
+.\venv\Scripts\python.exe scripts/init_db.py
+
+# (Optional) Seed dữ liệu mẫu
+.\venv\Scripts\python.exe scripts/seed_db.py
+```
+
+#### Windows (Git Bash):
+```bash
 # Tạo database và tables
 python scripts/init_db.py
 
@@ -135,23 +218,75 @@ python scripts/seed_db.py
 
 ### 5. Chạy Backend API
 
+#### macOS / Linux:
+```bash
+uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+#### Windows (PowerShell):
 ```powershell
-cd backend
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+.\venv\Scripts\python.exe -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+#### Windows (Git Bash):
+```bash
+uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Backend sẽ chạy tại: `http://localhost:8000`
 - API Docs (Swagger): `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-### 6. Chạy Frontend (Terminal mới)
+### 6. Chạy Frontend (Mở terminal mới)
 
+#### macOS / Linux:
+```bash
+# Đảm bảo venv đã được kích hoạt
+source venv/bin/activate
+
+# Chạy Streamlit
+streamlit run frontend/Home.py
+```
+
+#### Windows (PowerShell):
 ```powershell
-cd frontend
-streamlit run app.py
+# Đảm bảo venv đã được kích hoạt
+.\venv\Scripts\Activate.ps1
+
+# Chạy Streamlit
+.\venv\Scripts\python.exe -m streamlit run frontend/Home.py
+```
+
+#### Windows (Git Bash):
+```bash
+# Đảm bảo venv đã được kích hoạt
+source venv/Scripts/activate
+
+# Chạy Streamlit
+streamlit run frontend/Home.py
 ```
 
 Frontend sẽ chạy tại: `http://localhost:8501`
+
+### 🔧 Troubleshooting
+
+#### Python không tìm thấy hoặc sai phiên bản
+- **macOS/Linux**: Thử `python3.11 --version` hoặc cài Python 3.11 từ [python.org](https://www.python.org/downloads/)
+- **Windows**: Tải Python 3.11 từ [python.org](https://www.python.org/downloads/windows/) và đảm bảo chọn "Add Python to PATH" khi cài đặt
+
+#### PowerShell ExecutionPolicy Error
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+#### Module not found errors
+```bash
+# Đảm bảo virtual environment đã được kích hoạt và cài lại dependencies
+pip install -r requirements.txt
+```
+
+#### Port đã được sử dụng
+- Đổi port khác: `--port 8001` cho backend hoặc `--server.port 8502` cho frontend
 
 ## 📚 API Endpoints
 
@@ -266,9 +401,8 @@ MIT License - see LICENSE file for details
 
 ## 👥 Team Members
 
-- **Backend Developer**: [Tên bạn]
-- **Frontend Developer**: [Tên bạn]
-- **Database Designer**: [Tên bạn]
+- **Backend Developer**: Phuong Anh, Duc Minh, Hoang Duy
+- **Frontend Developer**: Gia Hoa, Kieu An
 
 ## 📧 Contact
 
@@ -312,4 +446,4 @@ Project Link: [https://github.com/yourusername/job-tracker-application](https://
 
 ---
 
-**Built with ❤️ by [Your Team Name]**
+**Built with ❤️ by Team 13 - UIT CN1.K2025 - Lap Trinh Python**

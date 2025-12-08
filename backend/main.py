@@ -7,6 +7,9 @@ from backend.core.config import settings
 from backend.core.database import init_db
 from backend.api.v1 import jobs, analytics
 
+# Import all models to ensure relationships are registered
+import backend.models  # noqa: F401
+
 # Create FastAPI app
 app = FastAPI(
     title=settings.APP_NAME,

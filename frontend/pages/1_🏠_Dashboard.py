@@ -9,8 +9,20 @@ from frontend.config.settings import STATUS_COLORS
 
 st.set_page_config(page_title="Dashboard", page_icon="🏠", layout="wide")
 
-st.title("🏠 Dashboard")
-st.markdown("Tổng quan về quá trình ứng tuyển của bạn")
+# Custom CSS
+st.markdown("""
+    <style>
+    .main > div {
+        padding-top: 2rem;
+    }
+    .stApp {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+st.title("💼 Job Tracker Application")
 st.markdown("---")
 
 try:
@@ -67,11 +79,17 @@ try:
         st.subheader("📈 Thống kê theo trạng thái")
         if by_status:
             df_status = pd.DataFrame(by_status)
-            st.bar_chart(df_status.set_index('status')['count'])
-            
-            # Show table
-            with st.expander("Xem chi tiết"):
-                st.dataframe(df_status, use_container_width=True)
+            # Filter out None/null status and ensure valid data
+            df_status = df_status[df_status['status'].notna()]
+            if not df_status.empty:
+                df_status['count'] = pd.to_numeric(df_status['count'], errors='coerce').fillna(0).astype(int)
+                st.bar_chart(df_status.set_index('status')['count'])
+                
+                # Show table
+                with st.expander("Xem chi tiết"):
+                    st.dataframe(df_status, use_container_width=True)
+            else:
+                st.info("Chưa có dữ liệu hợp lệ")
         else:
             st.info("Chưa có dữ liệu")
     
@@ -79,11 +97,17 @@ try:
         st.subheader("🌐 Thống kê theo nguồn")
         if by_source:
             df_source = pd.DataFrame(by_source)
-            st.bar_chart(df_source.set_index('source')['total_applications'])
-            
-            # Show table
-            with st.expander("Xem chi tiết"):
-                st.dataframe(df_source, use_container_width=True)
+            # Filter out None/null source and ensure valid data
+            df_source = df_source[df_source['source'].notna()]
+            if not df_source.empty:
+                df_source['total_applications'] = pd.to_numeric(df_source['total_applications'], errors='coerce').fillna(0).astype(int)
+                st.bar_chart(df_source.set_index('source')['total_applications'])
+                
+                # Show table
+                with st.expander("Xem chi tiết"):
+                    st.dataframe(df_source, use_container_width=True)
+            else:
+                st.info("Chưa có dữ liệu hợp lệ")
         else:
             st.info("Chưa có dữ liệu")
     
@@ -105,7 +129,36 @@ try:
     st.markdown("---")
     st.subheader("🕐 Hoạt động gần đây")
     st.info("Tính năng đang phát triển - sẽ hiển thị các cập nhật gần đây")
+    
+    # Status legend
+    st.markdown("---")
+    st.subheader("📌 Trạng thái Pipeline")
+    
+    # Show status with counts if we have data
+    if by_status:
+        status_dict = {item['status']: item['count'] for item in by_status}
+        cols = st.columns(len(STATUS_COLORS))
+        for idx, (status, icon) in enumerate(STATUS_COLORS.items()):
+            with cols[idx]:
+                count = status_dict.get(status, 0)
+                st.markdown(f"{icon} **{status}**")
+                st.metric("Số lượng", count)
+    else:
+        cols = st.columns(len(STATUS_COLORS))
+        for idx, (status, icon) in enumerate(STATUS_COLORS.items()):
+            with cols[idx]:
+                st.markdown(f"{icon} **{status}**")
 
 except Exception as e:
-    st.error(f"⚠️ Lỗi khi tải dữ liệu: {str(e)}")
-    st.info("Vui lòng đảm bảo backend đang chạy!")
+    st.warning("⚠️ Không thể kết nối với backend API. Vui lòng đảm bảo server đang chạy!")
+    st.code(f"Error: {str(e)}")
+    st.info("👉 Chạy backend bằng lệnh: `uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000`")
+    
+    # Show status legend even if API fails
+    st.markdown("---")
+    st.subheader("📌 Trạng thái Pipeline")
+    
+    cols = st.columns(len(STATUS_COLORS))
+    for idx, (status, icon) in enumerate(STATUS_COLORS.items()):
+        with cols[idx]:
+            st.markdown(f"{icon} **{status}**")
