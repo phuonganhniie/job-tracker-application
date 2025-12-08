@@ -44,58 +44,150 @@ tab1, tab2 = st.tabs(["📋 Danh sách Jobs", "➕ Thêm Job mới"])
 # Tab 1: Job list
 with tab1:
     try:
-        # Build filters
-        filters = {}
-        if status_filter != "Tất cả":
-            filters["status"] = status_filter
-        if source_filter:
-            filters["source"] = source_filter
-        if work_type_filter != "Tất cả":
-            filters["work_type"] = work_type_filter
-        if is_favorite:
-            filters["is_favorite"] = True
-        if search_keyword:
-            filters["company_name"] = search_keyword
-        
-        # Get jobs
-        response = job_service.get_jobs(page=1, page_size=50, filters=filters)
-        jobs = response.get("items", [])
-        total = response.get("total", 0)
-        
-        st.info(f"Tìm thấy **{total}** jobs")
-        
-        if jobs:
-            # Display as cards
-            for job in jobs:
-                with st.container():
-                    col1, col2, col3, col4 = st.columns([3, 2, 2, 1])
-                    
-                    with col1:
-                        status_icon = STATUS_COLORS.get(job["current_status"], "⚪")
-                        favorite = "⭐" if job.get("is_favorite") else ""
-                        st.markdown(f"### {favorite} {job['company_name']}")
-                        st.markdown(f"**{job['job_title']}**")
-                        if job.get("location"):
-                            st.caption(f"📍 {job['location']}")
-                    
-                    with col2:
-                        st.markdown(f"{status_icon} **{job['current_status']}**")
-                        if job.get("source"):
-                            st.caption(f"Nguồn: {job['source']}")
-                    
-                    with col3:
-                        st.caption(f"Nộp: {job['applied_date']}")
-                        if job.get("salary_min") and job.get("salary_max"):
-                            st.caption(f"💰 {job['salary_min']}-{job['salary_max']} {job.get('salary_currency', 'VND')}")
-                    
-                    with col4:
-                        if st.button("👁️", key=f"view_{job['id']}"):
-                            st.session_state.selected_job_id = job['id']
-                            st.switch_page("pages/2_💼_Jobs.py")
-                    
+        # Check if viewing job details
+        if "selected_job_id" in st.session_state and st.session_state.selected_job_id:
+            # Display job details
+            job_id = st.session_state.selected_job_id
+            
+            if st.button("⬅️ Quay lại danh sách"):
+                st.session_state.selected_job_id = None
+                st.rerun()
+            
+            st.markdown("---")
+            
+            try:
+                job = job_service.get_job(job_id)
+                
+                # Header
+                col1, col2 = st.columns([4, 1])
+                with col1:
+                    favorite = "⭐" if job.get("is_favorite") else ""
+                    st.title(f"{favorite} {job['company_name']}")
+                    st.subheader(job['job_title'])
+                with col2:
+                    status_icon = STATUS_COLORS.get(job["current_status"], "⚪")
+                    st.markdown(f"## {status_icon}")
+                    st.markdown(f"**{job['current_status']}**")
+                
+                st.markdown("---")
+                
+                # Details in columns
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    st.markdown("### 📋 Thông tin cơ bản")
+                    if job.get("location"):
+                        st.markdown(f"**📍 Địa điểm:** {job['location']}")
+                    if job.get("work_type"):
+                        st.markdown(f"**💼 Hình thức:** {job['work_type']}")
+                    if job.get("source"):
+                        st.markdown(f"**🔗 Nguồn:** {job['source']}")
+                    if job.get("job_url"):
+                        st.markdown(f"**🌐 Link:** [{job['job_url']}]({job['job_url']})")
+                
+                with col2:
+                    st.markdown("### 📅 Thời gian")
+                    st.markdown(f"**Ngày nộp:** {job['applied_date']}")
+                    if job.get("deadline"):
+                        st.markdown(f"**Deadline:** {job['deadline']}")
+                    st.markdown(f"**Tạo lúc:** {job.get('created_at', 'N/A')}")
+                    if job.get("updated_at"):
+                        st.markdown(f"**Cập nhật:** {job['updated_at']}")
+                
+                with col3:
+                    st.markdown("### 💰 Lương & Liên hệ")
+                    if job.get("salary_min") and job.get("salary_max"):
+                        salary_min = int(float(job['salary_min']))
+                        salary_max = int(float(job['salary_max']))
+                        st.markdown(f"**Lương:** {salary_min:,} - {salary_max:,} {job.get('salary_currency', 'VND')}")
+                    if job.get("contact_person"):
+                        st.markdown(f"**Người liên hệ:** {job['contact_person']}")
+                    if job.get("contact_email"):
+                        st.markdown(f"**Email:** {job['contact_email']}")
+                    if job.get("contact_phone"):
+                        st.markdown(f"**SĐT:** {job['contact_phone']}")
+                
+                # Job description
+                if job.get("job_description"):
                     st.markdown("---")
+                    st.markdown("### 📝 Mô tả công việc")
+                    st.markdown(job["job_description"])
+                
+                # Action buttons
+                st.markdown("---")
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    if st.button("✏️ Sửa", use_container_width=True):
+                        st.info("Chức năng đang phát triển")
+                with col2:
+                    if st.button("🗑️ Xóa", use_container_width=True):
+                        st.warning("Chức năng đang phát triển")
+                with col3:
+                    if st.button("📊 Xem Analytics", use_container_width=True):
+                        st.info("Chức năng đang phát triển")
+                
+            except Exception as e:
+                st.error(f"⚠️ Không thể tải chi tiết job: {str(e)}")
+                if st.button("⬅️ Quay lại"):
+                    st.session_state.selected_job_id = None
+                    st.rerun()
+        
         else:
-            st.info("Chưa có job nào. Hãy thêm job mới!")
+            # Display job list
+            # Build filters
+            filters = {}
+            if status_filter != "Tất cả":
+                filters["status"] = status_filter
+            if source_filter:
+                filters["source"] = source_filter
+            if work_type_filter != "Tất cả":
+                filters["work_type"] = work_type_filter
+            if is_favorite:
+                filters["is_favorite"] = True
+            if search_keyword:
+                filters["company_name"] = search_keyword
+            
+            # Get jobs
+            response = job_service.get_jobs(page=1, page_size=50, filters=filters)
+            jobs = response.get("items", [])
+            total = response.get("total", 0)
+            
+            st.info(f"Tìm thấy **{total}** jobs")
+            
+            if jobs:
+                # Display as cards
+                for job in jobs:
+                    with st.container():
+                        col1, col2, col3, col4 = st.columns([3, 2, 2, 1])
+                        
+                        with col1:
+                            status_icon = STATUS_COLORS.get(job["current_status"], "⚪")
+                            favorite = "⭐" if job.get("is_favorite") else ""
+                            st.markdown(f"### {favorite} {job['company_name']}")
+                            st.markdown(f"**{job['job_title']}**")
+                            if job.get("location"):
+                                st.caption(f"📍 {job['location']}")
+                        
+                        with col2:
+                            st.markdown(f"{status_icon} **{job['current_status']}**")
+                            if job.get("source"):
+                                st.caption(f"Nguồn: {job['source']}")
+                        
+                        with col3:
+                            st.caption(f"Nộp: {job['applied_date']}")
+                            if job.get("salary_min") and job.get("salary_max"):
+                                salary_min = int(float(job['salary_min']))
+                                salary_max = int(float(job['salary_max']))
+                                st.caption(f"💰 {salary_min:,}-{salary_max:,} {job.get('salary_currency', 'VND')}")
+                        
+                        with col4:
+                            if st.button("👁️", key=f"view_{job['id']}"):
+                                st.session_state.selected_job_id = job['id']
+                                st.rerun()
+                        
+                        st.markdown("---")
+            else:
+                st.info("Chưa có job nào. Hãy thêm job mới!")
     
     except Exception as e:
         st.error(f"⚠️ Lỗi: {str(e)}")

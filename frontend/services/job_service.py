@@ -35,6 +35,10 @@ class JobService:
         """Get job by ID"""
         return self.client.get(f"/jobs/{job_id}")
     
+    def get_job(self, job_id: int) -> Dict:
+        """Get job by ID (alias for get_job_by_id)"""
+        return self.get_job_by_id(job_id)
+    
     def update_job(self, job_id: int, job_data: Dict) -> Dict:
         """Update job"""
         return self.client.put(f"/jobs/{job_id}", job_data)
