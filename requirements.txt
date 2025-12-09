@@ -13,11 +13,13 @@ alembic==1.12.1
 # Frontend
 streamlit==1.28.2
 requests==2.31.0
+plotly==5.18.0
 
 # Data Processing
 pandas==2.1.3
 
 # Utilities
 python-dotenv==1.0.0
+python-dateutil==2.8.2
 
 # Development (optional - see requirements-dev.txt)

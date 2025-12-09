@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, case
 from typing import List, Dict
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from backend.models.job import Job
 from backend.models.application import Application
 from backend.models.interview import Interview
@@ -131,36 +132,61 @@ class AnalyticsService:
         """
         Get timeline statistics
         period: 'week', 'month', 'quarter'
+        
+        Note: 
+        - applications: Count by applied_date (when job was submitted)
+        - interviews: Count by scheduled_date (when interview was scheduled)
+        - offers: Count jobs that transitioned to OFFER status during the month (by updated_at)
+        - hired: Count jobs that transitioned to HIRED status during the month (by updated_at)
+        
+        This means timeline shows NEW status changes per month, not cumulative totals.
+        Returns last 6 months INCLUDING current month.
         """
         
-        # This is a simplified version - would need database-specific date functions
-        # For now, return last 6 months
         statistics = []
+        now = datetime.now()
         
-        for i in range(6, 0, -1):
-            month_start = datetime.now().replace(day=1) - timedelta(days=30*i)
-            month_end = month_start + timedelta(days=30)
+        # Use relativedelta for accurate month calculation
+        # Include current month (i=0) + last 5 months (i=1 to 5)
+        for i in range(5, -1, -1):
+            # Calculate month start and end using relativedelta
+            month_start = (now.replace(day=1, hour=0, minute=0, second=0, microsecond=0) 
+                          - relativedelta(months=i))
+            month_end = month_start + relativedelta(months=1)
             
+            # Count by application date (when job was submitted)
             applications = db.query(func.count(Job.id)).filter(
                 Job.applied_date >= month_start.date(),
                 Job.applied_date < month_end.date()
             ).scalar()
             
+            # Count by interview scheduled date
             interviews = db.query(func.count(Interview.id)).filter(
                 Interview.scheduled_date >= month_start,
                 Interview.scheduled_date < month_end
             ).scalar()
             
+            # Count jobs that CHANGED to OFFER status during this month
+            # Note: This counts status transitions, not total jobs in OFFER state
             offers = db.query(func.count(Job.id)).filter(
                 Job.current_status == JobStatus.OFFER.value,
                 Job.updated_at >= month_start,
                 Job.updated_at < month_end
             ).scalar()
             
+            # Count jobs that CHANGED to HIRED status during this month
             hired = db.query(func.count(Job.id)).filter(
                 Job.current_status == JobStatus.HIRED.value,
                 Job.updated_at >= month_start,
                 Job.updated_at < month_end
+            ).scalar()
+            
+            # Count jobs that are currently REJECTED and were applied during this month
+            # Using applied_date because updated_at may not be properly set in seed data
+            rejected = db.query(func.count(Job.id)).filter(
+                Job.current_status == JobStatus.REJECTED.value,
+                Job.applied_date >= month_start.date(),
+                Job.applied_date < month_end.date()
             ).scalar()
             
             statistics.append({
@@ -168,7 +194,8 @@ class AnalyticsService:
                 "applications": applications or 0,
                 "interviews": interviews or 0,
                 "offers": offers or 0,
-                "hired": hired or 0
+                "hired": hired or 0,
+                "rejected": rejected or 0
             })
         
         return statistics

@@ -29,6 +29,7 @@ class TimelineStatistics(BaseModel):
     interviews: int
     offers: int
     hired: int
+    rejected: int
 
 
 class AnalyticsSummary(BaseModel):
