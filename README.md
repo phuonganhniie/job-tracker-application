@@ -56,42 +56,6 @@ Job Tracker là giải pháp toàn diện cho việc theo dõi các đơn ứng 
 - **Code Quality**: black, flake8, mypy
 - **Containerization**: Docker (optional)
 
-## 📁 Cấu trúc dự án
-
-```
-job-tracker-application/
-├── backend/                    # FastAPI backend
-│   ├── core/                   # Core configs
-│   │   ├── config.py           # Settings
-│   │   └── database.py         # Database connection
-│   ├── models/                 # SQLAlchemy models
-│   │   ├── job.py              # Job model
-│   │   ├── application.py      # Application model
-│   │   ├── interview.py        # Interview model
-│   │   ├── note.py             # Note model
-│   │   └── email_template.py   # Email template model
-│   ├── schemas/                # Pydantic schemas
-│   ├── services/               # Business logic
-│   ├── api/v1/                 # API endpoints
-│   │   ├── jobs.py             # Job endpoints
-│   │   └── analytics.py        # Analytics endpoints
-│   ├── utils/                  # Utilities
-│   └── main.py                 # FastAPI app
-├── frontend/                   # Streamlit frontend
-│   ├── pages/                  # Multi-page app
-│   │   ├── 1_🏠_Dashboard.py   # Dashboard
-│   │   └── 2_💼_Jobs.py        # Job management
-│   ├── services/               # API client
-│   ├── config/                 # Frontend config
-│   └── app.py                  # Main app
-├── scripts/                    # Utility scripts
-│   ├── init_db.py              # Initialize database
-│   └── seed_db.py              # Seed sample data
-├── requirements.txt            # Python dependencies
-├── .env.example                # Environment template
-└── README.md                   # This file
-```
-
 ## 🚀 Cài đặt và chạy
 
 > **⚠️ Yêu cầu:** Python 3.11+ (khuyến nghị Python 3.11 để đảm bảo ổn định khi cài đặt dependencies)
@@ -309,33 +273,6 @@ pip install -r requirements.txt
 ### TODO: Các endpoints khác
 - Applications, Interviews, Notes, Email Templates (tương tự)
 
-## 🗄️ Database Schema
-
-Xem chi tiết ERD trong file `database_design.md`
-
-**5 bảng chính:**
-1. **jobs** - Thông tin công việc ứng tuyển
-2. **applications** - Lịch sử pipeline/trạng thái
-3. **interviews** - Lịch phỏng vấn
-4. **notes** - Ghi chú cho jobs/interviews
-5. **email_templates** - Mẫu email
-
-**Quan hệ:**
-- jobs 1:N applications
-- jobs 1:N interviews  
-- jobs 1:N notes
-- interviews 1:N notes
-
-## 🎨 Frontend Pages
-
-1. **🏠 Dashboard** - Tổng quan, thống kê nhanh
-2. **💼 Jobs** - Quản lý danh sách jobs
-3. **📋 Applications** - Xem pipeline/timeline
-4. **🎯 Interviews** - Lịch phỏng vấn
-5. **📝 Notes** - Quản lý ghi chú
-6. **📧 Email Templates** - Mẫu email
-7. **📊 Analytics** - Báo cáo chi tiết
-
 ## 🧪 Testing
 
 ```powershell
@@ -387,14 +324,6 @@ docker-compose up --build
 docker-compose down
 ```
 
-## 🤝 Contributing
-
-1. Fork repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
 ## 📄 License
 
 MIT License - see LICENSE file for details
@@ -403,10 +332,6 @@ MIT License - see LICENSE file for details
 
 - **Backend Developer**: Phuong Anh, Duc Minh, Hoang Duy
 - **Frontend Developer**: Gia Hoa, Kieu An
-
-## 📧 Contact
-
-Project Link: [https://github.com/yourusername/job-tracker-application](https://github.com/yourusername/job-tracker-application)
 
 ## 🎯 Roadmap
 
