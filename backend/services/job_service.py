@@ -54,17 +54,45 @@ class JobService:
         query = db.query(Job)
         
         # Apply filters
-        if filters.company_name:
+        # Handle multi-field search with OR condition
+        if filters.company_name and filters.job_title and filters.location:
+            # All three are the same - search in company, job title, OR location
+            if filters.company_name == filters.job_title == filters.location:
+                query = query.filter(
+                    or_(
+                        Job.company_name.ilike(f"%{filters.company_name}%"),
+                        Job.job_title.ilike(f"%{filters.job_title}%"),
+                        Job.location.ilike(f"%{filters.location}%")
+                    )
+                )
+            else:
+                # Different values, use AND for each field
+                query = query.filter(Job.company_name.ilike(f"%{filters.company_name}%"))
+                query = query.filter(Job.job_title.ilike(f"%{filters.job_title}%"))
+                query = query.filter(Job.location.ilike(f"%{filters.location}%"))
+        elif filters.company_name and filters.job_title:
+            # If both are the same (search in both fields), use OR
+            if filters.company_name == filters.job_title:
+                query = query.filter(
+                    or_(
+                        Job.company_name.ilike(f"%{filters.company_name}%"),
+                        Job.job_title.ilike(f"%{filters.job_title}%")
+                    )
+                )
+            else:
+                # Different values, use AND
+                query = query.filter(Job.company_name.ilike(f"%{filters.company_name}%"))
+                query = query.filter(Job.job_title.ilike(f"%{filters.job_title}%"))
+        elif filters.company_name:
             query = query.filter(Job.company_name.ilike(f"%{filters.company_name}%"))
-        
-        if filters.job_title:
+        elif filters.job_title:
             query = query.filter(Job.job_title.ilike(f"%{filters.job_title}%"))
         
         if filters.status:
             query = query.filter(Job.current_status == filters.status)
         
         if filters.source:
-            query = query.filter(Job.source == filters.source)
+            query = query.filter(Job.source.ilike(f"%{filters.source}%"))
         
         if filters.location:
             query = query.filter(Job.location.ilike(f"%{filters.location}%"))
