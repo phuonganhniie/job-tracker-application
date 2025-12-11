@@ -269,6 +269,15 @@ else:
                 {} - {}
             </div>
         </div>
+        <script>
+            // Auto-click first tab after job creation
+            setTimeout(function() {{
+                const firstTab = parent.document.querySelector('[data-baseweb="tab"][aria-selected="false"]');
+                if (firstTab) {{
+                    firstTab.click();
+                }}
+            }}, 100);
+        </script>
         """.format(
             st.session_state.get("new_job_company", ""), 
             st.session_state.get("new_job_title", "")
@@ -277,18 +286,13 @@ else:
         st.session_state.job_created_success = False
         st.session_state.pop("new_job_company", None)
         st.session_state.pop("new_job_title", None)
-    
-    # Determine default tab based on whether we just created a job
-    default_tab = 0 if not st.session_state.get("show_add_form", False) else 1
-    
-    # Main content tabs
-    tab1, tab2 = st.tabs(["📋 Danh sách Jobs", "✨ Thêm Job mới"])
-    
-    # Reset the show_add_form flag
-    if "show_add_form" in st.session_state:
-        del st.session_state.show_add_form
 
-    # Tab 1: Job list
+    # Initialize active tab in session state
+    if "active_tab" not in st.session_state:
+        st.session_state.active_tab = 0
+
+    # Main content tabs
+    tab1, tab2 = st.tabs(["📋 Danh sách Jobs", "✨ Thêm Job mới"])    # Tab 1: Job list
     with tab1:
         # Display job list
         # Build filters

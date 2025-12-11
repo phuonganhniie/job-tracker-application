@@ -12,6 +12,10 @@ def render_job_form():
     """
     Render modern form for adding new job with gradient design
     """
+    # Initialize form counter to reset form after submission
+    if "form_counter" not in st.session_state:
+        st.session_state.form_counter = 0
+    
     # Custom CSS for form
     st.markdown("""
     <style>
@@ -19,12 +23,13 @@ def render_job_form():
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     
     .form-header {
-        background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-        border-radius: 24px;
-        padding: 2rem 2.5rem;
-        margin-bottom: 2rem;
-        color: white;
-        box-shadow: 0 12px 40px rgba(6, 182, 212, 0.35);
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(6, 182, 212, 0.15);
+        border-radius: 20px;
+        padding: 1.75rem 2rem;
+        margin-bottom: 1.75rem;
+        box-shadow: 0 8px 32px rgba(6, 182, 212, 0.1);
         position: relative;
         overflow: hidden;
     }
@@ -32,32 +37,35 @@ def render_job_form():
     .form-header::before {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        animation: pulse 3s ease-in-out infinite;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #06b6d4 0%, #3b82f6 50%, #06b6d4 100%);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
     }
     
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.5; }
-        50% { transform: scale(1.1); opacity: 0.8; }
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
     }
     
     .form-section {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        background: rgba(248, 250, 252, 0.5);
+        backdrop-filter: blur(10px);
         border-radius: 16px;
         padding: 1.5rem;
         margin-bottom: 1.25rem;
-        border-left: 4px solid #06b6d4;
-        box-shadow: 0 2px 8px rgba(6, 182, 212, 0.08);
+        border: 2px solid rgba(6, 182, 212, 0.1);
+        box-shadow: 0 2px 8px rgba(6, 182, 212, 0.06);
         transition: all 0.3s ease;
     }
     
     .form-section:hover {
-        box-shadow: 0 4px 16px rgba(6, 182, 212, 0.15);
-        transform: translateY(-2px);
+        border-color: rgba(6, 182, 212, 0.25);
+        box-shadow: 0 4px 16px rgba(6, 182, 212, 0.12);
+        transform: translateY(-1px);
     }
     
     .form-section h3 {
@@ -71,16 +79,17 @@ def render_job_form():
     
     /* Form container */
     [data-testid="stForm"] {
-        background: white !important;
+        background: rgba(255, 255, 255, 0.6) !important;
+        backdrop-filter: blur(20px) !important;
+        border: 2px solid rgba(6, 182, 212, 0.1) !important;
         border-radius: 20px !important;
         padding: 1.5rem !important;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+        box-shadow: 0 4px 16px rgba(6, 182, 212, 0.08) !important;
     }
     
     /* All inputs styling */
     [data-testid="stForm"] input,
-    [data-testid="stForm"] textarea,
-    [data-testid="stForm"] select {
+    [data-testid="stForm"] textarea {
         border-radius: 16px !important;
         border: 2px solid #e0f2fe !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -91,6 +100,35 @@ def render_job_form():
         width: 100% !important;
         box-sizing: border-box !important;
         height: 48px !important;
+    }
+    
+    /* Selectbox specific styling */
+    [data-testid="stForm"] [data-baseweb="select"] > div {
+        border-radius: 16px !important;
+        border: 2px solid #e0f2fe !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 2px 8px rgba(6, 182, 212, 0.08) !important;
+        font-weight: 500 !important;
+        font-family: 'Inter', sans-serif !important;
+        min-height: 48px !important;
+        height: 48px !important;
+    }
+    
+    /* Selectbox alignment fix */
+    [data-testid="stForm"] .stSelectbox > div > div {
+        display: flex !important;
+        align-items: stretch !important;
+    }
+    
+    [data-testid="stForm"] [data-baseweb="select"] {
+        width: 100% !important;
+    }
+    
+    /* Ensure selectbox value text is vertically centered */
+    [data-testid="stForm"] [data-baseweb="select"] [role="button"] {
+        display: flex !important;
+        align-items: center !important;
+        padding: 0.75rem 1rem !important;
     }
     
     [data-testid="stForm"] textarea {
@@ -192,19 +230,17 @@ def render_job_form():
     # Header
     st.markdown("""
     <div class='form-header'>
-        <div style='display: flex; align-items: center; justify-content: center; gap: 1rem; position: relative; z-index: 1;'>
-            <div style='width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); flex-shrink: 0;'>
-                <span style='font-size: 32px; line-height: 1;'>✨</span>
-            </div>
-            <div style='text-align: left; flex: 1;'>
-                <h1 style='font-size: 28px; font-weight: 900; margin: 0; letter-spacing: -0.5px; line-height: 1.2;'>Thêm Job Mới</h1>
-                <p style='font-size: 15px; margin: 0.5rem 0 0 0; opacity: 0.95; line-height: 1.4;'>Điền thông tin công việc bạn muốn theo dõi</p>
-            </div>
+        <div style='position: relative; z-index: 1;'>
+            <h1 style='font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.5px; line-height: 1.2; color: #0891b2;'>Thêm Job Mới</h1>
+            <p style='font-size: 14px; margin: 0.5rem 0 0 0; line-height: 1.4; color: #64748b; font-weight: 500;'>Điền thông tin công việc bạn muốn theo dõi</p>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    with st.form("add_job_form"):
+    # Use dynamic form key to reset form after submission
+    form_key = f"add_job_form_{st.session_state.form_counter}"
+    
+    with st.form(form_key):
         # Basic Information Section
         st.markdown("<div class='form-section'><h3>📋 Thông tin cơ bản</h3>", unsafe_allow_html=True)
         col1, col2 = st.columns(2, gap="medium")
@@ -243,7 +279,7 @@ def render_job_form():
         with col2:
             salary_max = st.number_input("Lương tối đa", min_value=0, value=0, step=1000000)
         with col3:
-            salary_currency = st.selectbox("Đơn vị tiền tệ", ["VND", "USD", "EUR"])
+            salary_currency = st.selectbox("Đơn vị tiền tệ", ["VND", "USD"])
         st.markdown("</div>", unsafe_allow_html=True)
         
         # Contact Section
@@ -263,41 +299,44 @@ def render_job_form():
         st.markdown("""
         <style>
         div[data-testid="stFormSubmitButton"] > button {
-            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%) !important;
-            color: white !important;
+            background: rgba(6, 182, 212, 0.08) !important;
+            backdrop-filter: blur(10px) !important;
+            color: #0891b2 !important;
             font-family: 'Inter', sans-serif !important;
-            font-weight: 800 !important;
-            font-size: 18px !important;
-            letter-spacing: 0.5px !important;
-            padding: 1rem 2rem !important;
-            border-radius: 20px !important;
-            border: none !important;
-            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.4) !important;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            text-transform: uppercase !important;
-            height: 60px !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+            letter-spacing: 0.02em !important;
+            padding: 0.875rem 2rem !important;
+            border-radius: 16px !important;
+            border: 2px solid rgba(6, 182, 212, 0.2) !important;
+            box-shadow: 0 4px 16px rgba(6, 182, 212, 0.1) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            height: 52px !important;
             width: 100% !important;
         }
         
         div[data-testid="stFormSubmitButton"] > button:hover {
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%) !important;
-            transform: translateY(-3px) scale(1.02) !important;
-            box-shadow: 0 12px 40px rgba(234, 88, 12, 0.5) !important;
+            background: rgba(6, 182, 212, 0.15) !important;
+            border-color: rgba(6, 182, 212, 0.4) !important;
+            color: #0e7490 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 24px rgba(6, 182, 212, 0.2) !important;
         }
         
         div[data-testid="stFormSubmitButton"] > button:active {
-            transform: translateY(-1px) scale(0.98) !important;
+            transform: translateY(0px) scale(0.98) !important;
+            box-shadow: 0 2px 8px rgba(6, 182, 212, 0.15) !important;
         }
         
         div[data-testid="stFormSubmitButton"] > button p {
-            font-size: 18px !important;
-            font-weight: 800 !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
             margin: 0 !important;
         }
         </style>
         """, unsafe_allow_html=True)
         
-        submitted = st.form_submit_button("THÊM JOB NGAY", use_container_width=True)
+        submitted = st.form_submit_button("Thêm job mới", use_container_width=True)
         
         if submitted:
             if not company_name or not job_title:
@@ -325,6 +364,9 @@ def render_job_form():
                     }
                     
                     result = job_service.create_job(job_data)
+                    
+                    # Increment form counter to reset the form
+                    st.session_state.form_counter += 1
                     
                     st.session_state.job_created_success = True
                     st.session_state.new_job_company = result['company_name']
