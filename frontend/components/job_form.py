@@ -326,21 +326,10 @@ def render_job_form():
                     
                     result = job_service.create_job(job_data)
                     
-                    # Success message with custom styling
-                    st.markdown("""
-                    <div style='background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-                                color: white; padding: 1.5rem; border-radius: 16px; 
-                                text-align: center; margin-top: 1rem;
-                                box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);'>
-                        <h3 style='margin: 0; font-size: 20px; font-weight: 800;'>
-                            ✅ Thêm Job Thành Công!
-                        </h3>
-                        <p style='margin: 0.5rem 0 0 0; font-size: 16px; opacity: 0.95;'>
-                            Đã thêm: <strong>{}</strong> - <strong>{}</strong>
-                        </p>
-                    </div>
-                    """.format(result['company_name'], result['job_title']), unsafe_allow_html=True)
-                    st.balloons()
+                    st.session_state.job_created_success = True
+                    st.session_state.new_job_company = result['company_name']
+                    st.session_state.new_job_title = result['job_title']
+                    st.rerun()
                     
                 except Exception as e:
                     st.markdown(f"""

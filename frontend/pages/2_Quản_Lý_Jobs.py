@@ -229,11 +229,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+st.title("💼 Job Tracker Application")
+st.markdown("---")
 st.markdown("""
-<h1 style='font-size: 40px; font-weight: 900; color: #111827; 
-           margin-bottom: 10px; letter-spacing: -1.5px;'>
-    💼 Quản lý Jobs
-</h1>
 <p style='font-size: 16px; color: #6b7280; margin-bottom: 2rem;'>
     Theo dõi và quản lý các công việc đã/đang ứng tuyển
 </p>
@@ -255,8 +253,40 @@ if "selected_job_id" in st.session_state and st.session_state.selected_job_id:
     # Show job details without tabs
     render_job_detail(st.session_state.selected_job_id)
 else:
+    # Show success message if job was just created
+    if st.session_state.get("job_created_success", False):
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%); 
+                    padding: 1.25rem 1.75rem; 
+                    border-radius: 12px; 
+                    margin-bottom: 1.5rem;
+                    border-left: 5px solid #10b981;
+                    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);'>
+            <div style='color: #059669; font-weight: 700; font-size: 16px; margin-bottom: 4px;'>
+                Thêm job thành công
+            </div>
+            <div style='color: #6b7280; font-size: 14px; font-weight: 500;'>
+                {} - {}
+            </div>
+        </div>
+        """.format(
+            st.session_state.get("new_job_company", ""), 
+            st.session_state.get("new_job_title", "")
+        ), unsafe_allow_html=True)
+        
+        st.session_state.job_created_success = False
+        st.session_state.pop("new_job_company", None)
+        st.session_state.pop("new_job_title", None)
+    
+    # Determine default tab based on whether we just created a job
+    default_tab = 0 if not st.session_state.get("show_add_form", False) else 1
+    
     # Main content tabs
     tab1, tab2 = st.tabs(["📋 Danh sách Jobs", "✨ Thêm Job mới"])
+    
+    # Reset the show_add_form flag
+    if "show_add_form" in st.session_state:
+        del st.session_state.show_add_form
 
     # Tab 1: Job list
     with tab1:
