@@ -147,6 +147,7 @@ def render_job_filters():
         for key in filter_keys:
             if key in st.session_state:
                 del st.session_state[key]
+        st.rerun()
     
     # Modern title
     st.markdown("""
@@ -168,7 +169,7 @@ def render_job_filters():
     st.markdown("**Tìm kiếm công ty**")
     search_keyword = st.text_input(
         "Tìm kiếm",
-        value="",
+        value=st.session_state.get("search_keyword_input", ""),
         placeholder="Nhập tên công ty...",
         label_visibility="collapsed",
         help="Tìm kiếm không phân biệt hoa thường",
@@ -186,10 +187,18 @@ def render_job_filters():
         "Rejected": "Bị từ chối"
     }
     status_options_vn = ["Tất cả"] + [status_vn_map.get(s, s) for s in STATUS_COLORS.keys()]
+    
+    # Get saved index or default to 0
+    saved_status = st.session_state.get("status_filter_select", "Tất cả")
+    try:
+        status_index = status_options_vn.index(saved_status) if saved_status in status_options_vn else 0
+    except ValueError:
+        status_index = 0
+    
     status_filter_vn = st.selectbox(
         "Trạng thái",
         status_options_vn,
-        index=0,
+        index=status_index,
         label_visibility="collapsed",
         help="Lọc theo trạng thái ứng tuyển",
         key="status_filter_select"
@@ -202,7 +211,7 @@ def render_job_filters():
     st.markdown("**Nguồn tuyển dụng**")
     source_filter = st.text_input(
         "Nguồn",
-        value="",
+        value=st.session_state.get("source_filter_input", ""),
         placeholder="LinkedIn, Indeed, TopCV...",
         label_visibility="collapsed",
         help="Tìm kiếm không phân biệt hoa thường",
@@ -211,10 +220,19 @@ def render_job_filters():
     
     # Work type filter
     st.markdown("**Hình thức làm việc**")
+    work_types = ["Tất cả", "Remote", "Hybrid", "Onsite"]
+    
+    # Get saved index or default to 0
+    saved_worktype = st.session_state.get("work_type_filter_select", "Tất cả")
+    try:
+        worktype_index = work_types.index(saved_worktype) if saved_worktype in work_types else 0
+    except ValueError:
+        worktype_index = 0
+    
     work_type_filter = st.selectbox(
         "Hình thức",
-        ["Tất cả", "Remote", "Hybrid", "Onsite"],
-        index=0,
+        work_types,
+        index=worktype_index,
         label_visibility="collapsed",
         help="Lọc theo hình thức làm việc",
         key="work_type_filter_select"
@@ -224,7 +242,7 @@ def render_job_filters():
     st.markdown("**Yêu thích**")
     is_favorite = st.checkbox(
         "Chỉ hiển thị jobs yêu thích",
-        value=False,
+        value=st.session_state.get("is_favorite_checkbox", False),
         help="Hiển thị các công việc đã đánh dấu yêu thích",
         key="is_favorite_checkbox"
     )
@@ -234,10 +252,11 @@ def render_job_filters():
     # Action buttons
     col1, col2 = st.columns([1, 1])
     with col1:
-        if st.button("Làm mới", use_container_width=True, type="secondary"):
+        if st.button("Làm mới", use_container_width=True, type="secondary", key="refresh_button"):
             st.rerun()
     with col2:
-        st.button("Xóa lọc", use_container_width=True, type="primary", on_click=clear_filters)
+        if st.button("Xóa lọc", use_container_width=True, type="primary", key="clear_button"):
+            clear_filters()
     
     # Filter summary
     st.markdown("---")
