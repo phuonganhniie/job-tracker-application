@@ -271,7 +271,7 @@ pip install -r requirements.txt
 - `GET /api/v1/analytics/timeline` - Timeline data
 
 ### TODO: Các endpoints khác
-- Applications, Interviews, Notes, Email Templates (tương tự)
+- Interviews, Notes, Email Templates (tương tự)
 
 ## 🧪 Testing
 
@@ -284,44 +284,6 @@ pytest
 
 # Run with coverage
 pytest --cov=backend tests/
-```
-
-## 📝 Development
-
-### Code formatting
-
-```powershell
-# Format code with black
-black backend/ frontend/
-
-# Lint with flake8
-flake8 backend/
-
-# Type check with mypy
-mypy backend/
-```
-
-### Database migrations (Alembic)
-
-```powershell
-# Generate migration
-alembic revision --autogenerate -m "Description"
-
-# Apply migration
-alembic upgrade head
-
-# Rollback
-alembic downgrade -1
-```
-
-## 🐳 Docker (Optional)
-
-```powershell
-# Build and run with docker-compose
-docker-compose up --build
-
-# Stop
-docker-compose down
 ```
 
 ## 📄 License
@@ -341,14 +303,13 @@ MIT License - see LICENSE file for details
 - [x] Frontend (Dashboard, Jobs Management)
 - [x] Basic CRUD operations for Jobs
 
-### Phase 2 🚧 (Current - 1 week sprint)
+### Phase 2 🚧 (Current)
 **Focus: Core features completion**
 - [ ] Frontend: Edit & Delete UI for Jobs
 - [ ] Backend API: Interviews CRUD
-- [ ] Frontend: Interviews Management Page (calendar view)
+- [ ] Frontend: Interviews Management Page
 - [ ] Backend API: Email Templates CRUD
 - [ ] Frontend: Email Templates Management Page
-- [ ] Advanced filters for Jobs (location, work_type, date range)
 
 **Out of scope for Phase 2:**
 - ❌ Applications API (status already tracked in Job model)
