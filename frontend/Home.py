@@ -2,8 +2,16 @@
 Job Tracker Application - Streamlit Frontend
 Main entry point
 """
+import sys
+from pathlib import Path
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
 import streamlit as st
 from frontend.config.settings import STATUS_COLORS
+from frontend.components.sidebar_navigation import apply_sidebar_navigation_css
 
 # Page configuration
 st.set_page_config(
@@ -12,6 +20,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Apply sidebar navigation CSS
+apply_sidebar_navigation_css()
 
 # Custom CSS with Inter font and responsive design
 st.markdown("""

@@ -8,8 +8,12 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta
 from frontend.services.analytics_service import analytics_service
 from frontend.config.settings import STATUS_COLORS
+from frontend.components.sidebar_navigation import apply_sidebar_navigation_css
 
 st.set_page_config(page_title="Dashboard", page_icon="🏠", layout="wide")
+
+# Apply sidebar navigation CSS
+apply_sidebar_navigation_css()
 
 # Custom CSS with better fonts and responsive design
 st.markdown("""

@@ -6,8 +6,13 @@ from frontend.config.settings import STATUS_COLORS
 from frontend.components.job_list import render_job_list
 from frontend.components.job_detail import render_job_detail
 from frontend.components.job_form import render_job_form
+from frontend.components.sidebar_navigation import apply_sidebar_navigation_css
+from frontend.components.job_filters import render_job_filters
 
 st.set_page_config(page_title="Jobs", page_icon="💼", layout="wide")
+
+# Apply sidebar navigation CSS
+apply_sidebar_navigation_css()
 
 # Custom CSS with Inter font and modern styling
 st.markdown("""
@@ -145,177 +150,6 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     
-    /* Sidebar styling */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
-    }
-    
-    [data-testid="stSidebar"] .stMarkdown h2 {
-        color: #1f2937;
-        font-size: 20px;
-        font-weight: 800;
-        padding: 1rem 0 0.5rem 0;
-        border-bottom: 3px solid #667eea;
-        margin-bottom: 1.5rem;
-    }
-    
-    /* Filter section header */
-    .filter-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        font-weight: 700;
-        font-size: 16px;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    }
-    
-    /* Input styling in sidebar - Liquid style */
-    [data-testid="stSidebar"] .stTextInput > div > div {
-        border-radius: 16px;
-        border: 2px solid transparent;
-        background: linear-gradient(white, white) padding-box,
-                    linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
-    }
-    
-    [data-testid="stSidebar"] .stTextInput > div > div:focus-within {
-        border: 2px solid transparent;
-        background: linear-gradient(white, white) padding-box,
-                    linear-gradient(135deg, #764ba2 0%, #667eea 100%) border-box;
-        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
-        transform: translateY(-2px);
-    }
-    
-    [data-testid="stSidebar"] .stTextInput input {
-        border-radius: 14px;
-        font-weight: 500;
-    }
-    
-    [data-testid="stSidebar"] .stTextInput input::placeholder {
-        color: #9ca3af;
-        font-style: italic;
-        font-weight: 400;
-    }
-    
-    [data-testid="stSidebar"] .stSelectbox > div > div {
-        border-radius: 16px;
-        border: 2px solid transparent;
-        background: linear-gradient(white, white) padding-box,
-                    linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
-    }
-    
-    [data-testid="stSidebar"] .stSelectbox > div > div:hover {
-        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
-        transform: translateY(-1px);
-    }
-    
-    /* Radio button styling */
-    [data-testid="stSidebar"] .stRadio {
-        background: transparent;
-        padding: 0.75rem 0;
-        border-radius: 8px;
-        border: none;
-    }
-    
-    [data-testid="stSidebar"] .stRadio > label {
-        font-weight: 600;
-        color: #374151;
-        font-size: 13px;
-    }
-    
-    [data-testid="stSidebar"] .stRadio [role="radiogroup"] {
-        gap: 0.5rem;
-    }
-    
-    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] {
-        background: transparent;
-        border-radius: 6px;
-        padding: 0.4rem 0.75rem;
-        transition: all 0.2s;
-        border: none;
-    }
-    
-    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"]:hover {
-        background: transparent;
-    }
-    
-    [data-testid="stSidebar"] .stRadio input:checked + div {
-        background: transparent;
-        color: #374151;
-        font-weight: 600;
-        border: none;
-    }
-    
-    /* Checkbox styling */
-    [data-testid="stSidebar"] .stCheckbox {
-        background: transparent;
-        padding: 0.75rem 0;
-        border-radius: 8px;
-        border: none;
-        transition: all 0.2s;
-    }
-    
-    [data-testid="stSidebar"] .stCheckbox:hover {
-        border: none;
-        background: transparent;
-    }
-    
-    [data-testid="stSidebar"] .stCheckbox input:checked ~ div {
-        background: inherit;
-    }
-    
-    /* Section labels */
-    [data-testid="stSidebar"] .stMarkdown strong {
-        color: #1f2937;
-        font-size: 13px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-    
-    /* Action buttons styling */
-    [data-testid="stSidebar"] .stButton > button {
-        font-weight: 600;
-        padding: 0.6rem 1rem;
-        border-radius: 8px;
-        transition: all 0.2s;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-size: 12px;
-    }
-    
-    [data-testid="stSidebar"] .stButton > button[kind="secondary"] {
-        background: white;
-        color: #374151;
-        border: 1px solid #e5e7eb;
-    }
-    
-    [data-testid="stSidebar"] .stButton > button[kind="secondary"]:hover {
-        background: white;
-        border-color: #e5e7eb;
-    }
-    
-    [data-testid="stSidebar"] .stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-    }
-    
-    [data-testid="stSidebar"] .stButton > button[kind="primary"]:hover {
-        background: linear-gradient(135deg, #5568d3 0%, #6a4190 100%);
-        border: none;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    }
-    
     /* Tab styling - Liquid gradient design with blue-cyan gradient */
     .stTabs [data-baseweb="tab-list"] {
         gap: 1.5rem;
@@ -405,120 +239,16 @@ st.markdown("""
 </p>
 """, unsafe_allow_html=True)
 
-# Clear filter callback function
-def clear_filters():
-    """Clear all filter keys from session state"""
-    filter_keys = ["search_keyword_input", "status_filter_select", 
-                  "source_filter_input", "work_type_filter_select", "is_favorite_checkbox"]
-    for key in filter_keys:
-        if key in st.session_state:
-            del st.session_state[key]
-
 # Sidebar filters
 with st.sidebar:
-    # Search keyword with icon
-    st.markdown("**🔍 Tìm kiếm công ty**")
-    search_keyword = st.text_input(
-        "Tìm kiếm",
-        value="",
-        placeholder="Nhập tên công ty...",
-        label_visibility="collapsed",
-        help="Tìm kiếm không phân biệt hoa thường",
-        key="search_keyword_input"
-    )
-    
-    st.markdown("")  # Spacing
-    
-    # Status filter with icon and Vietnamese mapping
-    st.markdown("**📊 Trạng thái**")
-    status_vn_map = {
-        "Applied": "Đã nộp",
-        "Screening": "Sàng lọc",
-        "Interview": "Phỏng vấn",
-        "Offer": "Nhận offer",
-        "Hired": "Đã nhận việc",
-        "Rejected": "Bị từ chối"
-    }
-    status_options_vn = ["Tất cả"] + [status_vn_map.get(s, s) for s in STATUS_COLORS.keys()]
-    status_filter_vn = st.selectbox(
-        "Trạng thái",
-        status_options_vn,
-        index=0,
-        label_visibility="collapsed",
-        help="Lọc theo trạng thái ứng tuyển",
-        key="status_filter_select"
-    )
-    # Convert back to English for API
-    status_en_map = {v: k for k, v in status_vn_map.items()}
-    status_filter = status_en_map.get(status_filter_vn, status_filter_vn) if status_filter_vn != "Tất cả" else "Tất cả"
-    
-    st.markdown("")  # Spacing
-    
-    # Source filter with improved placeholder
-    st.markdown("**🌐 Nguồn tuyển dụng**")
-    source_filter = st.text_input(
-        "Nguồn",
-        value="",
-        placeholder="VD: LinkedIn, Indeed, TopCV...",
-        label_visibility="collapsed",
-        help="Tìm kiếm không phân biệt hoa thường (partial match)",
-        key="source_filter_input"
-    )
-    
-    st.markdown("")  # Spacing
-    
-    # Work type filter
-    st.markdown("**💼 Hình thức làm việc**")
-    work_type_filter = st.selectbox(
-        "Hình thức",
-        ["Tất cả", "Remote", "Hybrid", "Onsite"],
-        index=0,
-        label_visibility="collapsed",
-        help="Lọc theo hình thức làm việc",
-        key="work_type_filter_select"
-    )
-    
-    st.markdown("")  # Spacing
-    
-    # Favorite filter with enhanced checkbox
-    st.markdown("**⭐ Yêu thích**")
-    is_favorite = st.checkbox(
-        "Chỉ hiển thị jobs yêu thích",
-        value=False,
-        help="Hiển thị các công việc đã đánh dấu yêu thích",
-        key="is_favorite_checkbox"
-    )
-    
-    st.markdown("---")
-    
-    # Action buttons without icons
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        if st.button("Làm mới", use_container_width=True, type="secondary"):
-            st.rerun()
-    with col2:
-        st.button("Xóa lọc", use_container_width=True, type="primary", on_click=clear_filters)
-    
-    # Filter summary
-    st.markdown("---")
-    active_filters = []
-    if search_keyword:
-        active_filters.append(f"🔎 Công ty: {search_keyword}")
-    if status_filter != "Tất cả":
-        active_filters.append(f"📊 {status_filter}")
-    if source_filter:
-        active_filters.append(f"🌐 {source_filter}")
-    if work_type_filter != "Tất cả":
-        active_filters.append(f"💼 {work_type_filter}")
-    if is_favorite:
-        active_filters.append("⭐ Yêu thích")
-    
-    if active_filters:
-        st.markdown("**Đang lọc:**")
-        for f in active_filters:
-            st.caption(f"• {f}")
-    else:
-        st.info("💡 Chưa có bộ lọc nào")
+    filter_values = render_job_filters()
+
+# Extract filter values
+search_keyword = filter_values["search_keyword"]
+status_filter = filter_values["status_filter"]
+source_filter = filter_values["source_filter"]
+work_type_filter = filter_values["work_type_filter"]
+is_favorite = filter_values["is_favorite"]
 
 # Check if viewing job details
 if "selected_job_id" in st.session_state and st.session_state.selected_job_id:
