@@ -200,325 +200,6 @@ try:
     
     st.markdown("")  # Add spacing
     
-    # Row 2: Enhanced Jobs by key stages with beautiful gradient cards
-    st.markdown("""
-    <h3 style='font-size: 22px; font-weight: 700; color: #1f2937; 
-               margin: 25px 0 20px 0; letter-spacing: -0.5px;'>
-        Phân bố jobs theo giai đoạn
-    </h3>
-    """, unsafe_allow_html=True)
-    
-    # Calculate jobs by stage from by_status
-    status_dict = {item['status']: item['count'] for item in by_status} if by_status else {}
-    jobs_applied = status_dict.get('Applied', 0)
-    jobs_screening = status_dict.get('Screening', 0)
-    jobs_interview = status_dict.get('Interview', 0)
-    jobs_offer = status_dict.get('Offer', 0)
-    jobs_hired = status_dict.get('Hired', 0)
-    jobs_rejected = status_dict.get('Rejected', 0)
-    total_jobs = summary.get('total_applications', 0)
-    
-    # Calculate percentages
-    applied_pct = (jobs_applied / total_jobs * 100) if total_jobs > 0 else 0
-    screening_pct = (jobs_screening / total_jobs * 100) if total_jobs > 0 else 0
-    interview_pct = (jobs_interview / total_jobs * 100) if total_jobs > 0 else 0
-    offer_pct = (jobs_offer / total_jobs * 100) if total_jobs > 0 else 0
-    hired_pct = (jobs_hired / total_jobs * 100) if total_jobs > 0 else 0
-    rejected_pct = (jobs_rejected / total_jobs * 100) if total_jobs > 0 else 0
-    
-    # Row 1: Active stages (Applied → Offer)
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                    padding: 25px 20px; border-radius: 16px; 
-                    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.25);
-                    transition: transform 0.2s ease, box-shadow 0.2s ease;
-                    cursor: pointer;
-                    border: 2px solid rgba(255,255,255,0.1);'>
-            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
-                <div style='background: rgba(255,255,255,0.2); 
-                           padding: 10px; border-radius: 12px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 28px;'>📝</span>
-                </div>
-                <div style='background: rgba(255,255,255,0.25); 
-                           padding: 5px 12px; border-radius: 20px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 12px; font-weight: 700; color: white;'>
-                        {applied_pct:.0f}%
-                    </span>
-                </div>
-            </div>
-            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
-                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
-                       letter-spacing: 0.5px;'>
-                Đã nộp đơn
-            </div>
-            <div style='color: white; font-size: 42px; font-weight: 900; 
-                       line-height: 1; margin-bottom: 8px;
-                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
-                {jobs_applied}
-            </div>
-            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
-                Jobs đang chờ xử lý
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%); 
-                    padding: 25px 20px; border-radius: 16px; 
-                    box-shadow: 0 8px 16px rgba(118, 75, 162, 0.25);
-                    transition: transform 0.2s ease, box-shadow 0.2s ease;
-                    cursor: pointer;
-                    border: 2px solid rgba(255,255,255,0.1);'>
-            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
-                <div style='background: rgba(255,255,255,0.2); 
-                           padding: 10px; border-radius: 12px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 28px;'>🔍</span>
-                </div>
-                <div style='background: rgba(255,255,255,0.25); 
-                           padding: 5px 12px; border-radius: 20px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 12px; font-weight: 700; color: white;'>
-                        {screening_pct:.0f}%
-                    </span>
-                </div>
-            </div>
-            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
-                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
-                       letter-spacing: 0.5px;'>
-                Đang screening
-            </div>
-            <div style='color: white; font-size: 42px; font-weight: 900; 
-                       line-height: 1; margin-bottom: 8px;
-                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
-                {jobs_screening}
-            </div>
-            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
-                Hồ sơ đang được xem xét
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
-                    padding: 25px 20px; border-radius: 16px; 
-                    box-shadow: 0 8px 16px rgba(240, 147, 251, 0.25);
-                    transition: transform 0.2s ease, box-shadow 0.2s ease;
-                    cursor: pointer;
-                    border: 2px solid rgba(255,255,255,0.1);'>
-            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
-                <div style='background: rgba(255,255,255,0.2); 
-                           padding: 10px; border-radius: 12px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 28px;'>💬</span>
-                </div>
-                <div style='background: rgba(255,255,255,0.25); 
-                           padding: 5px 12px; border-radius: 20px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 12px; font-weight: 700; color: white;'>
-                        {interview_pct:.0f}%
-                    </span>
-                </div>
-            </div>
-            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
-                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
-                       letter-spacing: 0.5px;'>
-                Đang phỏng vấn
-            </div>
-            <div style='color: white; font-size: 42px; font-weight: 900; 
-                       line-height: 1; margin-bottom: 8px;
-                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
-                {jobs_interview}
-            </div>
-            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
-                Jobs đang trong vòng PV
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col4:
-        st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
-                    padding: 25px 20px; border-radius: 16px; 
-                    box-shadow: 0 8px 16px rgba(79, 172, 254, 0.25);
-                    transition: transform 0.2s ease, box-shadow 0.2s ease;
-                    cursor: pointer;
-                    border: 2px solid rgba(255,255,255,0.1);'>
-            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
-                <div style='background: rgba(255,255,255,0.2); 
-                           padding: 10px; border-radius: 12px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 28px;'>🎁</span>
-                </div>
-                <div style='background: rgba(255,255,255,0.25); 
-                           padding: 5px 12px; border-radius: 20px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 12px; font-weight: 700; color: white;'>
-                        {offer_pct:.0f}%
-                    </span>
-                </div>
-            </div>
-            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
-                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
-                       letter-spacing: 0.5px;'>
-                Đã có offer
-            </div>
-            <div style='color: white; font-size: 42px; font-weight: 900; 
-                       line-height: 1; margin-bottom: 8px;
-                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
-                {jobs_offer}
-            </div>
-            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
-                Offers đang cân nhắc
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("")  # Spacing
-    
-    # Row 2: Outcome stages (Hired & Rejected)
-    col1, col2, col3 = st.columns([1, 1, 2])
-    
-    with col1:
-        st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); 
-                    padding: 25px 20px; border-radius: 16px; 
-                    box-shadow: 0 8px 16px rgba(67, 233, 123, 0.25);
-                    transition: transform 0.2s ease, box-shadow 0.2s ease;
-                    cursor: pointer;
-                    border: 2px solid rgba(255,255,255,0.1);'>
-            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
-                <div style='background: rgba(255,255,255,0.2); 
-                           padding: 10px; border-radius: 12px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 28px;'>✅</span>
-                </div>
-                <div style='background: rgba(255,255,255,0.25); 
-                           padding: 5px 12px; border-radius: 20px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 12px; font-weight: 700; color: white;'>
-                        {hired_pct:.0f}%
-                    </span>
-                </div>
-            </div>
-            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
-                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
-                       letter-spacing: 0.5px;'>
-                Đã nhận việc
-            </div>
-            <div style='color: white; font-size: 42px; font-weight: 900; 
-                       line-height: 1; margin-bottom: 8px;
-                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
-                {jobs_hired}
-            </div>
-            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
-                Jobs đã chấp nhận
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
-                    padding: 25px 20px; border-radius: 16px; 
-                    box-shadow: 0 8px 16px rgba(239, 68, 68, 0.25);
-                    transition: transform 0.2s ease, box-shadow 0.2s ease;
-                    cursor: pointer;
-                    border: 2px solid rgba(255,255,255,0.1);'>
-            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
-                <div style='background: rgba(255,255,255,0.2); 
-                           padding: 10px; border-radius: 12px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 28px;'>❌</span>
-                </div>
-                <div style='background: rgba(255,255,255,0.25); 
-                           padding: 5px 12px; border-radius: 20px;
-                           backdrop-filter: blur(10px);'>
-                    <span style='font-size: 12px; font-weight: 700; color: white;'>
-                        {rejected_pct:.0f}%
-                    </span>
-                </div>
-            </div>
-            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
-                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
-                       letter-spacing: 0.5px;'>
-                Bị từ chối
-            </div>
-            <div style='color: white; font-size: 42px; font-weight: 900; 
-                       line-height: 1; margin-bottom: 8px;
-                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
-                {jobs_rejected}
-            </div>
-            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
-                Jobs không phù hợp
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        # Summary insight card
-        active_jobs = jobs_applied + jobs_screening + jobs_interview + jobs_offer
-        active_pct = (active_jobs / total_jobs * 100) if total_jobs > 0 else 0
-        completed_jobs = jobs_hired + jobs_rejected
-        completed_pct = (completed_jobs / total_jobs * 100) if total_jobs > 0 else 0
-        
-        st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); 
-                    padding: 25px 20px; border-radius: 16px; 
-                    border: 2px solid #667eea40;
-                    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);'>
-            <div style='margin-bottom: 20px;'>
-                <div style='color: #667eea; font-size: 14px; font-weight: 700; 
-                           text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;'>
-                    💼 Tổng quan Pipeline
-                </div>
-                <div style='color: #1f2937; font-size: 32px; font-weight: 900; 
-                           line-height: 1; margin-bottom: 5px;'>
-                    {total_jobs} <span style='font-size: 16px; font-weight: 600; color: #6b7280;'>jobs</span>
-                </div>
-            </div>
-            <div style='display: flex; gap: 20px; margin-top: 20px;'>
-                <div style='flex: 1;'>
-                    <div style='color: #6b7280; font-size: 12px; font-weight: 600; margin-bottom: 8px;'>
-                        🔄 Đang xử lý
-                    </div>
-                    <div style='display: flex; align-items: baseline; gap: 8px;'>
-                        <span style='color: #667eea; font-size: 28px; font-weight: 900;'>{active_jobs}</span>
-                        <span style='color: #667eea; font-size: 14px; font-weight: 700;'>({active_pct:.0f}%)</span>
-                    </div>
-                    <div style='background: #e5e7eb; height: 6px; border-radius: 3px; 
-                               overflow: hidden; margin-top: 8px;'>
-                        <div style='background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); 
-                                   height: 100%; width: {active_pct}%; transition: width 0.3s ease;'></div>
-                    </div>
-                </div>
-                <div style='flex: 1;'>
-                    <div style='color: #6b7280; font-size: 12px; font-weight: 600; margin-bottom: 8px;'>
-                        ✓ Đã hoàn thành
-                    </div>
-                    <div style='display: flex; align-items: baseline; gap: 8px;'>
-                        <span style='color: #10b981; font-size: 28px; font-weight: 900;'>{completed_jobs}</span>
-                        <span style='color: #10b981; font-size: 14px; font-weight: 700;'>({completed_pct:.0f}%)</span>
-                    </div>
-                    <div style='background: #e5e7eb; height: 6px; border-radius: 3px; 
-                               overflow: hidden; margin-top: 8px;'>
-                        <div style='background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%); 
-                                   height: 100%; width: {completed_pct}%; transition: width 0.3s ease;'></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("")  # Add spacing
-    
     st.markdown("---")
     
     # Charts
@@ -1162,63 +843,128 @@ try:
             """, unsafe_allow_html=True)
             
             # Show each status with count and percentage
-            # Map English status to Vietnamese
+            # Map English status to Vietnamese with liquid emoji
             status_vn_map = {
-                'Applied': 'Đã nộp',
-                'Screening': 'Sàng lọc',
-                'Interview': 'Phỏng vấn',
-                'Offer': 'Nhận offer',
-                'Hired': 'Đã nhận việc',
-                'Rejected': 'Bị từ chối'
+                'Applied': 'Đã nộp - Jobs đang chờ xử lý',
+                'Screening': 'Sàng lọc - Hồ sơ đang được xem xét',
+                'Interview': 'Phỏng vấn - Jobs đang trong vòng PV',
+                'Offer': 'Nhận offer - Offers đang cân nhắc',
+                'Hired': 'Đã nhận việc - Jobs đã chấp nhận',
+                'Rejected': 'Bị từ chối - Jobs không phù hợp'
             }
             
-            # Show all 6 statuses including Rejected
+            # Liquid-style emoji mapping
+            liquid_emoji_map = {
+                'Applied': '💧',
+                'Screening': '🔍',
+                'Interview': '💬',
+                'Offer': '🎁',
+                'Hired': '✨',
+                'Rejected': '❌'
+            }
+            
+            # Show all 6 statuses including Rejected with enhanced design
             for status in ['Applied', 'Screening', 'Interview', 'Offer', 'Hired', 'Rejected']:
                 status_vn = status_vn_map.get(status, status)
                 count = status_dict.get(status, 0)
                 percentage = (count / total_applications * 100) if total_applications > 0 else 0
-                icon = STATUS_COLORS.get(status, '⚪')
+                liquid_icon = liquid_emoji_map.get(status, '⚪')
                 
-                # Color coding based on status
+                # Enhanced gradient color coding
                 if status == 'Hired':
-                    color = '#43e97b'
-                    bg_color = '#f0fdf4'
+                    gradient = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+                    shadow_color = 'rgba(67, 233, 123, 0.3)'
+                    bar_color = '#43e97b'
                 elif status == 'Offer':
-                    color = '#4facfe'
-                    bg_color = '#eff6ff'
+                    gradient = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+                    shadow_color = 'rgba(79, 172, 254, 0.3)'
+                    bar_color = '#4facfe'
                 elif status == 'Interview':
-                    color = '#f093fb'
-                    bg_color = '#fdf4ff'
+                    gradient = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+                    shadow_color = 'rgba(240, 147, 251, 0.3)'
+                    bar_color = '#f093fb'
                 elif status == 'Screening':
-                    color = '#764ba2'
-                    bg_color = '#f5f3ff'
+                    gradient = 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'
+                    shadow_color = 'rgba(118, 75, 162, 0.3)'
+                    bar_color = '#764ba2'
                 elif status == 'Rejected':
-                    color = '#ef4444'
-                    bg_color = '#fee2e2'
+                    gradient = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                    shadow_color = 'rgba(239, 68, 68, 0.3)'
+                    bar_color = '#ef4444'
                 else:  # Applied
-                    color = '#667eea'
-                    bg_color = '#eef2ff'
+                    gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                    shadow_color = 'rgba(102, 126, 234, 0.3)'
+                    bar_color = '#667eea'
                 
                 st.markdown(f"""
-                <div style='background: {bg_color}; padding: 12px; border-radius: 8px; 
-                            margin-bottom: 10px; border-left: 4px solid {color};'>
-                    <div style='display: flex; justify-content: space-between; align-items: center;'>
-                        <span style='font-weight: 600; font-size: 14px;'>{icon} {status_vn}</span>
-                        <span style='font-size: 20px; font-weight: bold; color: {color};'>{count}</span>
-                    </div>
-                    <div style='margin-top: 8px;'>
-                        <div style='background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden;'>
-                            <div style='background: {color}; height: 100%; width: {percentage}%; transition: width 0.3s;'></div>
+                <div style='background: white; padding: 20px 22px; border-radius: 16px; 
+                            margin-bottom: 14px; 
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+                            border: 2px solid rgba(0, 0, 0, 0.04);
+                            transition: all 0.3s ease;
+                            cursor: pointer;'
+                     onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px {shadow_color}';"
+                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.06)';">
+                    <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;'>
+                        <div style='display: flex; align-items: center; gap: 12px;'>
+                            <div style='background: {gradient}; 
+                                       width: 48px; height: 48px; border-radius: 50%;
+                                       display: flex; align-items: center; justify-content: center;
+                                       box-shadow: 0 6px 16px {shadow_color}, inset 0 -2px 8px rgba(0,0,0,0.1);
+                                       position: relative;
+                                       overflow: hidden;'>
+                                <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                                           background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+                                           border-radius: 50%;'></div>
+                                <span style='font-size: 24px; position: relative; z-index: 1;
+                                           filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));'>{liquid_icon}</span>
+                            </div>
+                            <div>
+                                <div style='font-weight: 700; font-size: 15px; color: #1f2937; letter-spacing: -0.3px;'>
+                                    {status_vn}
+                                </div>
+                                <div style='font-size: 11px; color: #9ca3af; font-weight: 500; margin-top: 2px;'>
+                                    {percentage:.1f}% của tổng
+                                </div>
+                            </div>
                         </div>
-                        <span style='font-size: 12px; color: #6b7280; margin-top: 4px; display: block;'>
-                            {percentage:.1f}% của tổng
-                        </span>
+                        <div style='text-align: right;'>
+                            <div style='font-size: 32px; font-weight: 900; 
+                                       background: {gradient};
+                                       -webkit-background-clip: text;
+                                       -webkit-text-fill-color: transparent;
+                                       background-clip: text;
+                                       line-height: 1;'>
+                                {count}
+                            </div>
+                            <div style='font-size: 11px; color: #6b7280; font-weight: 600; margin-top: 4px;'>
+                                jobs
+                            </div>
+                        </div>
+                    </div>
+                    <div style='position: relative; background: #f3f4f6; height: 10px; border-radius: 10px; 
+                               overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);'>
+                        <div style='background: {gradient}; height: 100%; width: {percentage}%; 
+                                   border-radius: 10px;
+                                   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                                   box-shadow: 0 0 8px {shadow_color};
+                                   position: relative;'>
+                            <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                                       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                                       animation: shimmer 2s infinite;'></div>
+                        </div>
                     </div>
                 </div>
+                <style>
+                @keyframes shimmer {{
+                    0% {{ transform: translateX(-100%); }}
+                    100% {{ transform: translateX(100%); }}
+                }}
+                </style>
                 """, unsafe_allow_html=True)
             
-            # Overall success insight (remove duplicate rejected display)
-            st.markdown("---")
+            # Overall success insight with premium design
+            st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)
             hired_count = status_dict.get('Hired', 0)
             rejected_count = status_dict.get('Rejected', 0)
             completed_applications = hired_count + rejected_count
@@ -1229,37 +975,71 @@ try:
             if success_rate >= 50:
                 emoji = '🎉'
                 message = 'Xuất sắc!'
-                color = '#10b981'
+                gradient = 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                glow_color = 'rgba(16, 185, 129, 0.4)'
             elif success_rate >= 30:
                 emoji = '🌟'
                 message = 'Rất tốt!'
-                color = '#43e97b'
+                gradient = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+                glow_color = 'rgba(67, 233, 123, 0.4)'
             elif success_rate >= 15:
                 emoji = '👍'
                 message = 'Tiến triển tốt'
-                color = '#4facfe'
+                gradient = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+                glow_color = 'rgba(79, 172, 254, 0.4)'
             else:
                 emoji = '💪'
                 message = 'Tiếp tục cố gắng!'
-                color = '#667eea'
+                gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                glow_color = 'rgba(102, 126, 234, 0.4)'
             
             st.markdown(f"""
-            <div style='background: linear-gradient(135deg, {color}20 0%, {color}10 100%); 
-                        padding: 20px; border-radius: 12px; text-align: center; border: 2px solid {color}40;'>
-                <div style='font-size: 48px; margin-bottom: 10px;'>{emoji}</div>
-                <div style='font-size: 32px; font-weight: bold; color: {color};'>
-                    {success_rate:.1f}%
-                </div>
-                <div style='font-size: 14px; color: #6b7280; margin-top: 5px;'>
-                    Tỷ lệ thành công tổng thể
-                </div>
-                <div style='font-size: 11px; color: #9ca3af; margin-top: 3px;'>
-                    {hired_count} nhận việc / {completed_applications} đơn hoàn thành
-                </div>
-                <div style='font-size: 12px; color: {color}; font-weight: 600; margin-top: 8px;'>
-                    {message}
+            <div style='background: white; 
+                        padding: 30px 25px; border-radius: 20px; text-align: center; 
+                        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                        border: 2px solid rgba(0, 0, 0, 0.04);
+                        position: relative;
+                        overflow: hidden;'>
+                <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                           background: {gradient}; opacity: 0.05; z-index: 0;'></div>
+                <div style='position: relative; z-index: 1;'>
+                    <div style='font-size: 56px; margin-bottom: 15px; 
+                               animation: bounce 2s infinite;'>{emoji}</div>
+                    <div style='font-size: 48px; font-weight: 900; 
+                               background: {gradient};
+                               -webkit-background-clip: text;
+                               -webkit-text-fill-color: transparent;
+                               background-clip: text;
+                               line-height: 1.2;
+                               margin-bottom: 8px;'>
+                        {success_rate:.1f}%
+                    </div>
+                    <div style='font-size: 13px; color: #6b7280; font-weight: 600; 
+                               text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;'>
+                        Tỷ lệ thành công
+                    </div>
+                    <div style='display: inline-block; background: {gradient}; 
+                               padding: 10px 24px; border-radius: 25px; 
+                               box-shadow: 0 4px 12px {glow_color};
+                               margin-bottom: 12px;'>
+                        <span style='color: white; font-size: 14px; font-weight: 700; 
+                                    letter-spacing: 0.5px;'>
+                            {message}
+                        </span>
+                    </div>
+                    <div style='font-size: 12px; color: #9ca3af; margin-top: 12px; 
+                               padding-top: 12px; border-top: 2px solid #f3f4f6;'>
+                        <span style='font-weight: 700; color: #1f2937;'>{hired_count}</span> nhận việc / 
+                        <span style='font-weight: 700; color: #1f2937;'>{completed_applications}</span> đơn hoàn thành
+                    </div>
                 </div>
             </div>
+            <style>
+            @keyframes bounce {{
+                0%, 100% {{ transform: translateY(0); }}
+                50% {{ transform: translateY(-10px); }}
+            }}
+            </style>
             """, unsafe_allow_html=True)
     else:
         st.info("Chưa có dữ liệu để hiển thị pipeline funnel")
