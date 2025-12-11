@@ -137,43 +137,324 @@ try:
     
     st.markdown("")  # Add spacing
     
-    # Row 2: Secondary metrics
+    # Row 2: Enhanced Jobs by key stages with beautiful gradient cards
+    st.markdown("""
+    <h3 style='font-size: 22px; font-weight: 700; color: #1f2937; 
+               margin: 25px 0 20px 0; letter-spacing: -0.5px;'>
+        Phân bố jobs theo giai đoạn
+    </h3>
+    """, unsafe_allow_html=True)
+    
+    # Calculate jobs by stage from by_status
+    status_dict = {item['status']: item['count'] for item in by_status} if by_status else {}
+    jobs_applied = status_dict.get('Applied', 0)
+    jobs_screening = status_dict.get('Screening', 0)
+    jobs_interview = status_dict.get('Interview', 0)
+    jobs_offer = status_dict.get('Offer', 0)
+    jobs_hired = status_dict.get('Hired', 0)
+    jobs_rejected = status_dict.get('Rejected', 0)
+    total_jobs = summary.get('total_applications', 0)
+    
+    # Calculate percentages
+    applied_pct = (jobs_applied / total_jobs * 100) if total_jobs > 0 else 0
+    screening_pct = (jobs_screening / total_jobs * 100) if total_jobs > 0 else 0
+    interview_pct = (jobs_interview / total_jobs * 100) if total_jobs > 0 else 0
+    offer_pct = (jobs_offer / total_jobs * 100) if total_jobs > 0 else 0
+    hired_pct = (jobs_hired / total_jobs * 100) if total_jobs > 0 else 0
+    rejected_pct = (jobs_rejected / total_jobs * 100) if total_jobs > 0 else 0
+    
+    # Row 1: Active stages (Applied → Offer)
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        total_interviews = summary.get('total_interviews', 0)
-        st.metric(
-            label="💬 Tổng phỏng vấn",
-            value=total_interviews,
-            help="Tổng số buổi phỏng vấn đã thực hiện"
-        )
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    padding: 25px 20px; border-radius: 16px; 
+                    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.25);
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    cursor: pointer;
+                    border: 2px solid rgba(255,255,255,0.1);'>
+            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
+                <div style='background: rgba(255,255,255,0.2); 
+                           padding: 10px; border-radius: 12px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 28px;'>📝</span>
+                </div>
+                <div style='background: rgba(255,255,255,0.25); 
+                           padding: 5px 12px; border-radius: 20px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 12px; font-weight: 700; color: white;'>
+                        {applied_pct:.0f}%
+                    </span>
+                </div>
+            </div>
+            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
+                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
+                       letter-spacing: 0.5px;'>
+                Đã nộp đơn
+            </div>
+            <div style='color: white; font-size: 42px; font-weight: 900; 
+                       line-height: 1; margin-bottom: 8px;
+                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
+                {jobs_applied}
+            </div>
+            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
+                Jobs đang chờ xử lý
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col2:
-        upcoming = summary.get('upcoming_interviews', 0)
-        st.metric(
-            label="📅 PV sắp tới",
-            value=upcoming,
-            delta=f"+{upcoming}" if upcoming > 0 else None,
-            help="Số buổi phỏng vấn được lên lịch"
-        )
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%); 
+                    padding: 25px 20px; border-radius: 16px; 
+                    box-shadow: 0 8px 16px rgba(118, 75, 162, 0.25);
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    cursor: pointer;
+                    border: 2px solid rgba(255,255,255,0.1);'>
+            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
+                <div style='background: rgba(255,255,255,0.2); 
+                           padding: 10px; border-radius: 12px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 28px;'>🔍</span>
+                </div>
+                <div style='background: rgba(255,255,255,0.25); 
+                           padding: 5px 12px; border-radius: 20px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 12px; font-weight: 700; color: white;'>
+                        {screening_pct:.0f}%
+                    </span>
+                </div>
+            </div>
+            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
+                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
+                       letter-spacing: 0.5px;'>
+                Đang screening
+            </div>
+            <div style='color: white; font-size: 42px; font-weight: 900; 
+                       line-height: 1; margin-bottom: 8px;
+                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
+                {jobs_screening}
+            </div>
+            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
+                Hồ sơ đang được xem xét
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col3:
-        offers = summary.get('offers_received', 0)
-        st.metric(
-            label="🎁 Offers nhận được",
-            value=offers,
-            delta=f"+{offers}" if offers > 0 else None,
-            help="Số lượng offer đã nhận"
-        )
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
+                    padding: 25px 20px; border-radius: 16px; 
+                    box-shadow: 0 8px 16px rgba(240, 147, 251, 0.25);
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    cursor: pointer;
+                    border: 2px solid rgba(255,255,255,0.1);'>
+            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
+                <div style='background: rgba(255,255,255,0.2); 
+                           padding: 10px; border-radius: 12px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 28px;'>💬</span>
+                </div>
+                <div style='background: rgba(255,255,255,0.25); 
+                           padding: 5px 12px; border-radius: 20px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 12px; font-weight: 700; color: white;'>
+                        {interview_pct:.0f}%
+                    </span>
+                </div>
+            </div>
+            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
+                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
+                       letter-spacing: 0.5px;'>
+                Đang phỏng vấn
+            </div>
+            <div style='color: white; font-size: 42px; font-weight: 900; 
+                       line-height: 1; margin-bottom: 8px;
+                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
+                {jobs_interview}
+            </div>
+            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
+                Jobs đang trong vòng PV
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col4:
-        hired = summary.get('hired_count', 0)
-        st.metric(
-            label="✅ Đã nhận việc",
-            value=hired,
-            delta=f"+{hired}" if hired > 0 else None,
-            help="Số công việc đã chấp nhận"
-        )
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+                    padding: 25px 20px; border-radius: 16px; 
+                    box-shadow: 0 8px 16px rgba(79, 172, 254, 0.25);
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    cursor: pointer;
+                    border: 2px solid rgba(255,255,255,0.1);'>
+            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
+                <div style='background: rgba(255,255,255,0.2); 
+                           padding: 10px; border-radius: 12px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 28px;'>🎁</span>
+                </div>
+                <div style='background: rgba(255,255,255,0.25); 
+                           padding: 5px 12px; border-radius: 20px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 12px; font-weight: 700; color: white;'>
+                        {offer_pct:.0f}%
+                    </span>
+                </div>
+            </div>
+            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
+                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
+                       letter-spacing: 0.5px;'>
+                Đã có offer
+            </div>
+            <div style='color: white; font-size: 42px; font-weight: 900; 
+                       line-height: 1; margin-bottom: 8px;
+                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
+                {jobs_offer}
+            </div>
+            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
+                Offers đang cân nhắc
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("")  # Spacing
+    
+    # Row 2: Outcome stages (Hired & Rejected)
+    col1, col2, col3 = st.columns([1, 1, 2])
+    
+    with col1:
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); 
+                    padding: 25px 20px; border-radius: 16px; 
+                    box-shadow: 0 8px 16px rgba(67, 233, 123, 0.25);
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    cursor: pointer;
+                    border: 2px solid rgba(255,255,255,0.1);'>
+            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
+                <div style='background: rgba(255,255,255,0.2); 
+                           padding: 10px; border-radius: 12px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 28px;'>✅</span>
+                </div>
+                <div style='background: rgba(255,255,255,0.25); 
+                           padding: 5px 12px; border-radius: 20px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 12px; font-weight: 700; color: white;'>
+                        {hired_pct:.0f}%
+                    </span>
+                </div>
+            </div>
+            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
+                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
+                       letter-spacing: 0.5px;'>
+                Đã nhận việc
+            </div>
+            <div style='color: white; font-size: 42px; font-weight: 900; 
+                       line-height: 1; margin-bottom: 8px;
+                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
+                {jobs_hired}
+            </div>
+            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
+                Jobs đã chấp nhận
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
+                    padding: 25px 20px; border-radius: 16px; 
+                    box-shadow: 0 8px 16px rgba(239, 68, 68, 0.25);
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    cursor: pointer;
+                    border: 2px solid rgba(255,255,255,0.1);'>
+            <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;'>
+                <div style='background: rgba(255,255,255,0.2); 
+                           padding: 10px; border-radius: 12px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 28px;'>❌</span>
+                </div>
+                <div style='background: rgba(255,255,255,0.25); 
+                           padding: 5px 12px; border-radius: 20px;
+                           backdrop-filter: blur(10px);'>
+                    <span style='font-size: 12px; font-weight: 700; color: white;'>
+                        {rejected_pct:.0f}%
+                    </span>
+                </div>
+            </div>
+            <div style='color: rgba(255,255,255,0.9); font-size: 13px; 
+                       font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
+                       letter-spacing: 0.5px;'>
+                Bị từ chối
+            </div>
+            <div style='color: white; font-size: 42px; font-weight: 900; 
+                       line-height: 1; margin-bottom: 8px;
+                       text-shadow: 0 2px 8px rgba(0,0,0,0.2);'>
+                {jobs_rejected}
+            </div>
+            <div style='color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500;'>
+                Jobs không phù hợp
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        # Summary insight card
+        active_jobs = jobs_applied + jobs_screening + jobs_interview + jobs_offer
+        active_pct = (active_jobs / total_jobs * 100) if total_jobs > 0 else 0
+        completed_jobs = jobs_hired + jobs_rejected
+        completed_pct = (completed_jobs / total_jobs * 100) if total_jobs > 0 else 0
+        
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); 
+                    padding: 25px 20px; border-radius: 16px; 
+                    border: 2px solid #667eea40;
+                    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);'>
+            <div style='margin-bottom: 20px;'>
+                <div style='color: #667eea; font-size: 14px; font-weight: 700; 
+                           text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;'>
+                    💼 Tổng quan Pipeline
+                </div>
+                <div style='color: #1f2937; font-size: 32px; font-weight: 900; 
+                           line-height: 1; margin-bottom: 5px;'>
+                    {total_jobs} <span style='font-size: 16px; font-weight: 600; color: #6b7280;'>jobs</span>
+                </div>
+            </div>
+            <div style='display: flex; gap: 20px; margin-top: 20px;'>
+                <div style='flex: 1;'>
+                    <div style='color: #6b7280; font-size: 12px; font-weight: 600; margin-bottom: 8px;'>
+                        🔄 Đang xử lý
+                    </div>
+                    <div style='display: flex; align-items: baseline; gap: 8px;'>
+                        <span style='color: #667eea; font-size: 28px; font-weight: 900;'>{active_jobs}</span>
+                        <span style='color: #667eea; font-size: 14px; font-weight: 700;'>({active_pct:.0f}%)</span>
+                    </div>
+                    <div style='background: #e5e7eb; height: 6px; border-radius: 3px; 
+                               overflow: hidden; margin-top: 8px;'>
+                        <div style='background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); 
+                                   height: 100%; width: {active_pct}%; transition: width 0.3s ease;'></div>
+                    </div>
+                </div>
+                <div style='flex: 1;'>
+                    <div style='color: #6b7280; font-size: 12px; font-weight: 600; margin-bottom: 8px;'>
+                        ✓ Đã hoàn thành
+                    </div>
+                    <div style='display: flex; align-items: baseline; gap: 8px;'>
+                        <span style='color: #10b981; font-size: 28px; font-weight: 900;'>{completed_jobs}</span>
+                        <span style='color: #10b981; font-size: 14px; font-weight: 700;'>({completed_pct:.0f}%)</span>
+                    </div>
+                    <div style='background: #e5e7eb; height: 6px; border-radius: 3px; 
+                               overflow: hidden; margin-top: 8px;'>
+                        <div style='background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%); 
+                                   height: 100%; width: {completed_pct}%; transition: width 0.3s ease;'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("")  # Add spacing
     
     st.markdown("---")
     
@@ -333,31 +614,46 @@ try:
     if timeline:
         df_timeline = pd.DataFrame(timeline)
         
-        # Calculate additional insights
-        total_apps = df_timeline['applications'].sum() if 'applications' in df_timeline.columns else 0
-        total_interviews = df_timeline['interviews'].sum() if 'interviews' in df_timeline.columns else 0
-        total_offers = df_timeline['offers'].sum() if 'offers' in df_timeline.columns else 0
-        total_hired = df_timeline['hired'].sum() if 'hired' in df_timeline.columns else 0
+        # Calculate actual insights from by_status (not timeline sum which can be duplicate)
+        status_dict = {item['status']: item['count'] for item in by_status} if by_status else {}
         
-        # Interview conversion rate
-        interview_rate = (total_interviews / total_apps * 100) if total_apps > 0 else 0
-        offer_rate = (total_offers / total_interviews * 100) if total_interviews > 0 else 0
+        # Get real counts from status breakdown
+        total_apps = summary.get('total_applications', 0)  # Total applications from summary
+        total_interviews_status = status_dict.get('Interview', 0)  # Jobs currently in Interview status
+        total_offers_status = status_dict.get('Offer', 0)  # Jobs currently in Offer status
+        total_hired = status_dict.get('Hired', 0)  # Jobs that got hired
         
-        # Quick insights above chart
+        # For timeline visualization - keep timeline sums
+        timeline_apps = df_timeline['applications'].sum() if 'applications' in df_timeline.columns else 0
+        timeline_interviews = df_timeline['interviews'].sum() if 'interviews' in df_timeline.columns else 0
+        timeline_offers = df_timeline['offers'].sum() if 'offers' in df_timeline.columns else 0
+        timeline_hired = df_timeline['hired'].sum() if 'hired' in df_timeline.columns else 0
+        
+        # Calculate conversion rates using summary data (more accurate)
+        # Interview rate: jobs that reached interview stage / total jobs
+        jobs_reached_interview = (status_dict.get('Interview', 0) + status_dict.get('Offer', 0) + 
+                                   status_dict.get('Hired', 0) + status_dict.get('Rejected', 0))
+        interview_rate = (jobs_reached_interview / total_apps * 100) if total_apps > 0 else 0
+        
+        # Offer rate: jobs that got offer / jobs that reached interview
+        jobs_got_offer = status_dict.get('Offer', 0) + status_dict.get('Hired', 0)
+        offer_rate = (jobs_got_offer / jobs_reached_interview * 100) if jobs_reached_interview > 0 else 0
+        
+        # Quick insights above chart (use timeline data for display)
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.markdown(f"""
             <div style='background: #f0f8ff; padding: 15px; border-radius: 10px; border-left: 4px solid #1f77b4;'>
                 <p style='margin: 0; color: #666; font-size: 12px;'>Tổng đơn nộp (6 tháng)</p>
-                <h2 style='margin: 5px 0; color: #1f77b4;'>{total_apps}</h2>
+                <h2 style='margin: 5px 0; color: #1f77b4;'>{timeline_apps}</h2>
             </div>
             """, unsafe_allow_html=True)
         
         with col2:
             st.markdown(f"""
             <div style='background: #fff5f0; padding: 15px; border-radius: 10px; border-left: 4px solid #ff7f0e;'>
-                <p style='margin: 0; color: #666; font-size: 12px;'>Tổng phỏng vấn (6 tháng)</p>
-                <h2 style='margin: 5px 0; color: #ff7f0e;'>{total_interviews}</h2>
+                <p style='margin: 0; color: #666; font-size: 12px;'>Tổng buổi PV (6 tháng)</p>
+                <h2 style='margin: 5px 0; color: #ff7f0e;'>{timeline_interviews}</h2>
             </div>
             """, unsafe_allow_html=True)
         
@@ -365,7 +661,7 @@ try:
             st.markdown(f"""
             <div style='background: #f0fff4; padding: 15px; border-radius: 10px; border-left: 4px solid #2ca02c;'>
                 <p style='margin: 0; color: #666; font-size: 12px;'>Tổng offers nhận được</p>
-                <h2 style='margin: 5px 0; color: #2ca02c;'>{total_offers}</h2>
+                <h2 style='margin: 5px 0; color: #2ca02c;'>{timeline_offers}</h2>
             </div>
             """, unsafe_allow_html=True)
         
@@ -373,7 +669,7 @@ try:
             st.markdown(f"""
             <div style='background: #f5f0ff; padding: 15px; border-radius: 10px; border-left: 4px solid #9467bd;'>
                 <p style='margin: 0; color: #666; font-size: 12px;'>Đã nhận việc</p>
-                <h2 style='margin: 5px 0; color: #9467bd;'>{total_hired}</h2>
+                <h2 style='margin: 5px 0; color: #9467bd;'>{timeline_hired}</h2>
             </div>
             """, unsafe_allow_html=True)
         
@@ -402,12 +698,12 @@ try:
                 x=df_timeline['period'],
                 y=df_timeline['interviews'],
                 mode='lines+markers',
-                name='Phỏng vấn',
+                name='Buổi phỏng vấn',
                 line=dict(color='#f093fb', width=4, shape='spline'),
                 marker=dict(size=12, color='#f093fb', line=dict(color='white', width=2)),
                 fill='tozeroy',
                 fillcolor='rgba(240, 147, 251, 0.1)',
-                hovertemplate='<b>Phỏng vấn</b><br>%{y} buổi<extra></extra>'
+                hovertemplate='<b>Buổi phỏng vấn</b><br>%{y} buổi<extra></extra>'
             ))
         
         # Add line for offers
@@ -490,13 +786,13 @@ try:
             st.markdown(f"""
             <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
                         padding: 20px; border-radius: 12px; color: white;'>
-                <h4 style='margin: 0 0 10px 0;'>📊 Tỷ lệ phỏng vấn</h4>
+                <h4 style='margin: 0 0 10px 0;'>📊 Tỷ lệ đến phỏng vấn</h4>
                 <h2 style='margin: 0; font-size: 36px;'>{interview_rate:.1f}%</h2>
                 <p style='margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;'>
-                    {total_interviews} phỏng vấn / {total_apps} đơn nộp
+                    {jobs_reached_interview} jobs đến PV / {total_apps} đơn nộp
                 </p>
                 <p style='margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;'>
-                    {'✨ Tốt!' if interview_rate >= 20 else '📈 Có thể cải thiện' if interview_rate >= 10 else '💪 Tiếp tục cố gắng!'}
+                    {'✨ Tốt!' if interview_rate >= 40 else '📈 Có thể cải thiện' if interview_rate >= 25 else '💪 Tiếp tục cố gắng!'}
                 </p>
             </div>
             """, unsafe_allow_html=True)
@@ -505,10 +801,10 @@ try:
             st.markdown(f"""
             <div style='background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
                         padding: 20px; border-radius: 12px; color: white;'>
-                <h4 style='margin: 0 0 10px 0;'>🎯 Tỷ lệ chuyển đổi offer</h4>
+                <h4 style='margin: 0 0 10px 0;'>🎯 Tỷ lệ nhận offer</h4>
                 <h2 style='margin: 0; font-size: 36px;'>{offer_rate:.1f}%</h2>
                 <p style='margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;'>
-                    {total_offers} offer / {total_interviews} phỏng vấn
+                    {jobs_got_offer} jobs có offer / {jobs_reached_interview} jobs PV
                 </p>
                 <p style='margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;'>
                     {'🎉 Xuất sắc!' if offer_rate >= 30 else '👍 Khá tốt' if offer_rate >= 15 else '💼 Cần cải thiện kỹ năng PV'}
@@ -524,7 +820,7 @@ try:
             column_mapping = {
                 'period': 'Tháng',
                 'applications': 'Đơn nộp',
-                'interviews': 'Phỏng vấn',
+                'interviews': 'Buổi PV',
                 'offers': 'Offers',
                 'hired': 'Đã nhận việc',
                 'rejected': 'Bị từ chối'
@@ -532,11 +828,11 @@ try:
             df_display.columns = [column_mapping.get(col, col) for col in df_display.columns]
             
             # Add conversion rate columns
-            if all(col in df_display.columns for col in ['Đơn nộp', 'Phỏng vấn']):
-                df_display['Tỷ lệ PV (%)'] = (df_display['Phỏng vấn'] / df_display['Đơn nộp'] * 100).fillna(0).round(1)
+            if all(col in df_display.columns for col in ['Đơn nộp', 'Buổi PV']):
+                df_display['Tỷ lệ PV (%)'] = (df_display['Buổi PV'] / df_display['Đơn nộp'] * 100).fillna(0).round(1)
             
-            if all(col in df_display.columns for col in ['Phỏng vấn', 'Offers']):
-                df_display['Tỷ lệ Offer (%)'] = (df_display['Offers'] / df_display['Phỏng vấn'] * 100).fillna(0).round(1)
+            if all(col in df_display.columns for col in ['Buổi PV', 'Offers']):
+                df_display['Tỷ lệ Offer (%)'] = (df_display['Offers'] / df_display['Buổi PV'] * 100).fillna(0).round(1)
             
             st.dataframe(
                 df_display,
