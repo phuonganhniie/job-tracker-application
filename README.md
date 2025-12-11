@@ -335,26 +335,40 @@ MIT License - see LICENSE file for details
 
 ## 🎯 Roadmap
 
-### Phase 1 (Current) ✅
+### Phase 1 ✅ (Completed)
 - [x] Database design & ERD
 - [x] Backend API (Jobs, Analytics)
-- [x] Frontend (Dashboard, Jobs)
-- [x] Basic CRUD operations
+- [x] Frontend (Dashboard, Jobs Management)
+- [x] Basic CRUD operations for Jobs
 
-### Phase 2 (Next) 🚧
-- [ ] Complete all API endpoints (Applications, Interviews, Notes, Email Templates)
-- [ ] Complete all frontend pages
-- [ ] Advanced search & filters
-- [ ] Email integration (send emails)
+### Phase 2 🚧 (Current - 1 week sprint)
+**Focus: Core features completion**
+- [ ] Frontend: Edit & Delete UI for Jobs
+- [ ] Backend API: Interviews CRUD
+- [ ] Frontend: Interviews Management Page (calendar view)
+- [ ] Backend API: Email Templates CRUD
+- [ ] Frontend: Email Templates Management Page
+- [ ] Advanced filters for Jobs (location, work_type, date range)
 
-### Phase 3 (Future) 📅
+**Out of scope for Phase 2:**
+- ❌ Applications API (status already tracked in Job model)
+- ❌ Notes API (moved to Phase 3)
+- ❌ Email sending functionality (moved to Phase 3)
+
+### Phase 3 📅 (Future enhancements)
+**Advanced Features:**
+- [ ] Notes system (API + UI for job/interview notes)
+- [ ] Email integration (send emails from templates)
+- [ ] Advanced analytics & reports
+- [ ] Export reports (PDF, Excel)
+
+**Enterprise Features:**
 - [ ] User authentication & authorization
 - [ ] Multi-user support
 - [ ] Calendar integration (Google Calendar)
-- [ ] Export reports (PDF, Excel)
 - [ ] Mobile responsive UI
 - [ ] Notification system
-- [ ] AI-powered insights
+- [ ] AI-powered insights & recommendations
 
 ## 🐛 Known Issues
 

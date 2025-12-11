@@ -255,17 +255,6 @@ def main():
     
     with col2:
         st.markdown("""
-        <div class='feature-card' style='border-left-color: #43e97b;'>
-            <div class='feature-icon'>📝</div>
-            <div class='feature-title'>Ghi chú thông minh</div>
-            <div class='feature-desc'>
-                Lưu trữ mọi thông tin quan trọng: nghiên cứu công ty, chuẩn bị phỏng vấn, 
-                đàm phán lương, follow-up...
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
         <div class='feature-card' style='border-left-color: #f59e0b;'>
             <div class='feature-icon'>📧</div>
             <div class='feature-title'>Email Templates</div>
