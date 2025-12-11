@@ -766,73 +766,168 @@ try:
                     'rate': rate
                 })
             
-            # Display in 2x2 grid for better visualization
+            # Display in 2x2 grid for conversion cards
             row1_cols = st.columns(2)
             row2_cols = st.columns(2)
             all_cols = [row1_cols[0], row1_cols[1], row2_cols[0], row2_cols[1]]
             
             for idx, conv in enumerate(conversions):
                 with all_cols[idx]:
-                    # Color and icon based on rate with better thresholds
+                    # Premium gradient color and icon based on rate
                     if conv['rate'] >= 60:
-                        color = '#10b981'  # green-500
-                        bg_gradient = 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)'
+                        gradient = 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                        shadow = 'rgba(16, 185, 129, 0.4)'
                         badge = 'Tuyệt vời'
-                        badge_color = '#059669'
+                        emoji = '🚀'
                     elif conv['rate'] >= 40:
-                        color = '#3b82f6'  # blue-500
-                        bg_gradient = 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)'
+                        gradient = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
+                        shadow = 'rgba(59, 130, 246, 0.4)'
                         badge = 'Tốt'
-                        badge_color = '#2563eb'
+                        emoji = '⭐'
                     elif conv['rate'] >= 20:
-                        color = '#f59e0b'  # amber-500
-                        bg_gradient = 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)'
+                        gradient = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                        shadow = 'rgba(245, 158, 11, 0.4)'
                         badge = 'Trung bình'
-                        badge_color = '#d97706'
+                        emoji = '💪'
                     else:
-                        color = '#ef4444'  # red-500
-                        bg_gradient = 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)'
+                        gradient = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                        shadow = 'rgba(239, 68, 68, 0.4)'
                         badge = 'Cần cải thiện'
-                        badge_color = '#dc2626'
+                        emoji = '📈'
                     
                     st.markdown(f"""
-                    <div style='background: {bg_gradient}; 
-                                padding: 20px; 
-                                border-radius: 12px; 
-                                border: 2px solid {color}30;
-                                box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+                    <div style='background: {gradient}; 
+                                padding: 22px 20px; 
+                                border-radius: 18px; 
+                                border: 2px solid rgba(255, 255, 255, 0.3);
+                                box-shadow: 0 8px 20px {shadow};
                                 margin-bottom: 15px;
-                                transition: transform 0.2s;'>
-                        <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;'>
-                            <span style='font-size: 12px; font-weight: 600; color: {badge_color}; 
-                                       background: white; padding: 4px 10px; border-radius: 12px;'>
-                                {badge}
-                            </span>
-                            <span style='font-size: 11px; color: #6b7280; font-weight: 500;'>
-                                Giai đoạn {idx + 1}
-                            </span>
-                        </div>
-                        <div style='text-align: center; margin: 15px 0;'>
-                            <div style='font-size: 40px; font-weight: 800; color: {color}; 
-                                       line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.1);'>
-                                {conv['rate']:.1f}<span style='font-size: 24px;'>%</span>
+                                transition: all 0.3s ease;
+                                position: relative;
+                                overflow: hidden;
+                                cursor: pointer;'
+                         onmouseover="this.style.transform='translateY(-5px) scale(1.02)'; this.style.boxShadow='0 12px 32px {shadow}';";
+                         onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 20px {shadow}';">
+                        <div style='position: absolute; top: -20px; right: -20px; width: 80px; height: 80px;
+                                   background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+                                   border-radius: 50%;'></div>
+                        <div style='position: relative; z-index: 1;'>
+                            <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;'>
+                                <div style='background: rgba(255, 255, 255, 0.25); padding: 6px 14px; border-radius: 20px;
+                                           backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3);'>
+                                    <span style='font-size: 11px; font-weight: 700; color: white; 
+                                               text-transform: uppercase; letter-spacing: 0.5px;'>
+                                        {emoji} {badge}
+                                    </span>
+                                </div>
+                                <div style='background: rgba(0, 0, 0, 0.15); padding: 4px 10px; border-radius: 12px;
+                                           backdrop-filter: blur(5px);'>
+                                    <span style='font-size: 10px; color: rgba(255, 255, 255, 0.9); font-weight: 600;'>
+                                        Giai đoạn {idx + 1}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                        <div style='background: white; padding: 10px; border-radius: 8px; margin-top: 12px;'>
-                            <div style='font-size: 13px; color: #374151; font-weight: 600; margin-bottom: 6px;'>
-                                {conv['from']} → {conv['to']}
+                            <div style='text-align: center; margin: 18px 0;'>
+                                <div style='font-size: 52px; font-weight: 900; color: white; 
+                                           line-height: 1; text-shadow: 0 4px 12px rgba(0,0,0,0.3);'>
+                                    {conv['rate']:.1f}<span style='font-size: 28px; font-weight: 800;'>%</span>
+                                </div>
                             </div>
-                            <div style='font-size: 12px; color: #6b7280;'>
-                                {conv['to_count']} / {conv['from_count']} chuyển tiếp
-                            </div>
-                            <div style='background: #e5e7eb; height: 6px; border-radius: 3px; 
-                                       overflow: hidden; margin-top: 8px;'>
-                                <div style='background: {color}; height: 100%; width: {conv['rate']:.1f}%; 
-                                           transition: width 0.3s ease;'></div>
+                            <div style='background: rgba(255, 255, 255, 0.2); padding: 12px; border-radius: 12px; 
+                                       backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.25);'>
+                                <div style='font-size: 13px; color: white; font-weight: 700; margin-bottom: 8px;
+                                           text-shadow: 0 2px 4px rgba(0,0,0,0.2);'>
+                                    {conv['from']} → {conv['to']}
+                                </div>
+                                <div style='font-size: 12px; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 10px;'>
+                                    {conv['to_count']} / {conv['from_count']} chuyển tiếp thành công
+                                </div>
+                                <div style='background: rgba(0, 0, 0, 0.15); height: 8px; border-radius: 10px; 
+                                           overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);'>
+                                    <div style='background: rgba(255, 255, 255, 0.9); height: 100%; width: {conv['rate']:.1f}%; 
+                                               border-radius: 10px;
+                                               transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                                               box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+                                               position: relative;'>
+                                        <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                                                   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                                                   animation: shimmer 2s infinite;'></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
+            
+            # Add prominent success rate card spanning 2 columns with liquid style
+            st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
+            
+            hired_count = status_dict.get('Hired', 0)
+            rejected_count = status_dict.get('Rejected', 0)
+            completed_applications = hired_count + rejected_count
+            
+            # Success rate based on completed applications only (Hired + Rejected)
+            success_rate = (hired_count / completed_applications * 100) if completed_applications > 0 else 0
+            
+            if success_rate >= 50:
+                emoji = '🎉'
+                message = 'Xuất sắc!'
+                base_color = '#10b981'
+                glow_color = 'rgba(16, 185, 129, 0.3)'
+            elif success_rate >= 30:
+                emoji = '🌟'
+                message = 'Rất tốt!'
+                base_color = '#43e97b'
+                glow_color = 'rgba(67, 233, 123, 0.3)'
+            elif success_rate >= 15:
+                emoji = '👍'
+                message = 'Tiến triển tốt'
+                base_color = '#4facfe'
+                glow_color = 'rgba(79, 172, 254, 0.3)'
+            else:
+                emoji = '💪'
+                message = 'Tiếp tục cố gắng!'
+                base_color = '#667eea'
+                glow_color = 'rgba(102, 126, 234, 0.3)'
+            
+            # Build HTML string properly to avoid rendering issues
+            st.markdown(f"""
+            <div style='background: white; padding: 45px 40px; border-radius: 24px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08); border: 3px solid {base_color}; position: relative; overflow: hidden; transition: all 0.3s ease;' onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 60px {glow_color}';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 12px 40px rgba(0, 0, 0, 0.08)';">
+                <div style='position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; background: {base_color}; opacity: 0.08; border-radius: 50%; box-shadow: 0 0 60px {glow_color};'></div>
+                <div style='position: absolute; bottom: -20px; left: -20px; width: 80px; height: 80px; background: {base_color}; opacity: 0.06; border-radius: 50%;'></div>
+                <div style='position: absolute; top: 50%; right: 10%; width: 40px; height: 40px; background: {base_color}; opacity: 0.05; border-radius: 50%;'></div>
+                <div style='position: relative; z-index: 1; text-align: center;'>
+                    <div style='display: flex; align-items: center; justify-content: center; background: {base_color}; width: 100px; height: 100px; border-radius: 50%; box-shadow: 0 8px 24px {glow_color}, inset 0 -4px 12px rgba(0,0,0,0.1); position: relative; margin: 0 auto 25px auto; animation: float 3s ease-in-out infinite;'>
+                        <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 60%); border-radius: 50%;'></div>
+                        <span style='font-size: 48px; position: relative; z-index: 1; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));'>{emoji}</span>
+                    </div>
+                    <div style='font-size: 72px; font-weight: 900; color: {base_color}; line-height: 1; margin-bottom: 12px; text-shadow: 0 4px 12px {glow_color}; letter-spacing: -2px;'>
+                        {success_rate:.1f}<span style='font-size: 42px;'>%</span>
+                    </div>
+                    <div style='font-size: 16px; color: #6b7280; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;'>
+                        Tỷ lệ thành công tổng thể
+                    </div>
+                    <div style='display: inline-block; background: {base_color}; padding: 12px 32px; border-radius: 30px; box-shadow: 0 6px 20px {glow_color}, inset 0 2px 0 rgba(255,255,255,0.3); margin-bottom: 25px; position: relative; overflow: hidden;'>
+                        <div style='position: absolute; top: 0; left: 0; right: 0; height: 50%; background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);'></div>
+                        <span style='color: white; font-size: 16px; font-weight: 800; letter-spacing: 1px; position: relative; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);'>{message}</span>
+                    </div>
+                    <div style='background: #f9fafb; padding: 20px; border-radius: 16px; border: 2px solid #f3f4f6;'>
+                        <div style='font-size: 14px; color: #9ca3af; margin-bottom: 8px; font-weight: 600;'>Chi tiết kết quả</div>
+                        <div style='font-size: 16px; color: #1f2937; font-weight: 700;'>
+                            <span style='color: {base_color}; font-size: 24px;'>{hired_count}</span> nhận việc
+                            <span style='color: #d1d5db; margin: 0 8px;'>/</span>
+                            <span style='color: #6b7280; font-size: 20px;'>{completed_applications}</span> đơn hoàn thành
+                        </div>
+                    </div>
+                </div>
+                <style>
+                @keyframes float {{
+                    0%, 100% {{ transform: translateY(0px); }}
+                    50% {{ transform: translateY(-15px); }}
+                }}
+                </style>
+            </div>
+            """, unsafe_allow_html=True)
         
         with col2:
             st.markdown("""
@@ -897,61 +992,71 @@ try:
                     bar_color = '#667eea'
                 
                 st.markdown(f"""
-                <div style='background: white; padding: 20px 22px; border-radius: 16px; 
+                <div style='background: {gradient}; padding: 18px 20px; border-radius: 18px; 
                             margin-bottom: 14px; 
-                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-                            border: 2px solid rgba(0, 0, 0, 0.04);
+                            box-shadow: 0 6px 18px {shadow_color};
+                            border: 2px solid rgba(255, 255, 255, 0.3);
                             transition: all 0.3s ease;
-                            cursor: pointer;'
-                     onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px {shadow_color}';"
-                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.06)';">
-                    <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;'>
-                        <div style='display: flex; align-items: center; gap: 12px;'>
-                            <div style='background: {gradient}; 
-                                       width: 48px; height: 48px; border-radius: 50%;
-                                       display: flex; align-items: center; justify-content: center;
-                                       box-shadow: 0 6px 16px {shadow_color}, inset 0 -2px 8px rgba(0,0,0,0.1);
-                                       position: relative;
-                                       overflow: hidden;'>
+                            cursor: pointer;
+                            position: relative;
+                            overflow: hidden;'
+                     onmouseover="this.style.transform='translateY(-4px) scale(1.02)'; this.style.boxShadow='0 12px 28px {shadow_color}';"
+                     onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 18px {shadow_color}';">
+                    <div style='position: absolute; top: 0; right: 0; width: 100px; height: 100px;
+                               background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+                               border-radius: 50%; transform: translate(30%, -30%);'></div>
+                    <div style='position: relative; z-index: 1;'>
+                        <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;'>
+                            <div style='display: flex; align-items: center; gap: 10px;'>
+                                <div style='background: rgba(255, 255, 255, 0.25); 
+                                           width: 40px; height: 40px; border-radius: 50%;
+                                           display: flex; align-items: center; justify-content: center;
+                                           box-shadow: 0 4px 12px rgba(0,0,0,0.15), inset 0 -2px 6px rgba(0,0,0,0.1);
+                                           backdrop-filter: blur(10px);
+                                           border: 2px solid rgba(255, 255, 255, 0.3);
+                                           position: relative;
+                                           overflow: hidden;'>
+                                    <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                                               background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+                                               border-radius: 50%;'></div>
+                                    <span style='font-size: 20px; position: relative; z-index: 1;
+                                               filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));'>{liquid_icon}</span>
+                                </div>
+                                <div>
+                                    <div style='font-weight: 800; font-size: 14px; color: white; letter-spacing: -0.3px;
+                                               text-shadow: 0 2px 4px rgba(0,0,0,0.2);'>
+                                        {status_vn}
+                                    </div>
+                                    <div style='font-size: 11px; color: rgba(255, 255, 255, 0.85); font-weight: 600; margin-top: 2px;'>
+                                        {percentage:.1f}% của tổng
+                                    </div>
+                                </div>
+                            </div>
+                            <div style='text-align: right;'>
+                                <div style='font-size: 36px; font-weight: 900; 
+                                           color: white;
+                                           line-height: 1;
+                                           text-shadow: 0 3px 8px rgba(0,0,0,0.25);'>
+                                    {count}
+                                </div>
+                                <div style='font-size: 10px; color: rgba(255, 255, 255, 0.8); font-weight: 700; 
+                                           margin-top: 4px; text-transform: uppercase; letter-spacing: 1px;'>
+                                    jobs
+                                </div>
+                            </div>
+                        </div>
+                        <div style='position: relative; background: rgba(255, 255, 255, 0.2); height: 8px; border-radius: 10px; 
+                                   overflow: hidden; backdrop-filter: blur(10px);
+                                   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);'>
+                            <div style='background: rgba(255, 255, 255, 0.8); height: 100%; width: {percentage}%; 
+                                       border-radius: 10px;
+                                       transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                                       box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+                                       position: relative;'>
                                 <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-                                           background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 50%);
-                                           border-radius: 50%;'></div>
-                                <span style='font-size: 24px; position: relative; z-index: 1;
-                                           filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));'>{liquid_icon}</span>
+                                           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+                                           animation: shimmer 2s infinite;'></div>
                             </div>
-                            <div>
-                                <div style='font-weight: 700; font-size: 15px; color: #1f2937; letter-spacing: -0.3px;'>
-                                    {status_vn}
-                                </div>
-                                <div style='font-size: 11px; color: #9ca3af; font-weight: 500; margin-top: 2px;'>
-                                    {percentage:.1f}% của tổng
-                                </div>
-                            </div>
-                        </div>
-                        <div style='text-align: right;'>
-                            <div style='font-size: 32px; font-weight: 900; 
-                                       background: {gradient};
-                                       -webkit-background-clip: text;
-                                       -webkit-text-fill-color: transparent;
-                                       background-clip: text;
-                                       line-height: 1;'>
-                                {count}
-                            </div>
-                            <div style='font-size: 11px; color: #6b7280; font-weight: 600; margin-top: 4px;'>
-                                jobs
-                            </div>
-                        </div>
-                    </div>
-                    <div style='position: relative; background: #f3f4f6; height: 10px; border-radius: 10px; 
-                               overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);'>
-                        <div style='background: {gradient}; height: 100%; width: {percentage}%; 
-                                   border-radius: 10px;
-                                   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-                                   box-shadow: 0 0 8px {shadow_color};
-                                   position: relative;'>
-                            <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-                                       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-                                       animation: shimmer 2s infinite;'></div>
                         </div>
                     </div>
                 </div>
@@ -962,85 +1067,6 @@ try:
                 }}
                 </style>
                 """, unsafe_allow_html=True)
-            
-            # Overall success insight with premium design
-            st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)
-            hired_count = status_dict.get('Hired', 0)
-            rejected_count = status_dict.get('Rejected', 0)
-            completed_applications = hired_count + rejected_count
-            
-            # Success rate based on completed applications only (Hired + Rejected)
-            success_rate = (hired_count / completed_applications * 100) if completed_applications > 0 else 0
-            
-            if success_rate >= 50:
-                emoji = '🎉'
-                message = 'Xuất sắc!'
-                gradient = 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
-                glow_color = 'rgba(16, 185, 129, 0.4)'
-            elif success_rate >= 30:
-                emoji = '🌟'
-                message = 'Rất tốt!'
-                gradient = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
-                glow_color = 'rgba(67, 233, 123, 0.4)'
-            elif success_rate >= 15:
-                emoji = '👍'
-                message = 'Tiến triển tốt'
-                gradient = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
-                glow_color = 'rgba(79, 172, 254, 0.4)'
-            else:
-                emoji = '💪'
-                message = 'Tiếp tục cố gắng!'
-                gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                glow_color = 'rgba(102, 126, 234, 0.4)'
-            
-            st.markdown(f"""
-            <div style='background: white; 
-                        padding: 30px 25px; border-radius: 20px; text-align: center; 
-                        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-                        border: 2px solid rgba(0, 0, 0, 0.04);
-                        position: relative;
-                        overflow: hidden;'>
-                <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-                           background: {gradient}; opacity: 0.05; z-index: 0;'></div>
-                <div style='position: relative; z-index: 1;'>
-                    <div style='font-size: 56px; margin-bottom: 15px; 
-                               animation: bounce 2s infinite;'>{emoji}</div>
-                    <div style='font-size: 48px; font-weight: 900; 
-                               background: {gradient};
-                               -webkit-background-clip: text;
-                               -webkit-text-fill-color: transparent;
-                               background-clip: text;
-                               line-height: 1.2;
-                               margin-bottom: 8px;'>
-                        {success_rate:.1f}%
-                    </div>
-                    <div style='font-size: 13px; color: #6b7280; font-weight: 600; 
-                               text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;'>
-                        Tỷ lệ thành công
-                    </div>
-                    <div style='display: inline-block; background: {gradient}; 
-                               padding: 10px 24px; border-radius: 25px; 
-                               box-shadow: 0 4px 12px {glow_color};
-                               margin-bottom: 12px;'>
-                        <span style='color: white; font-size: 14px; font-weight: 700; 
-                                    letter-spacing: 0.5px;'>
-                            {message}
-                        </span>
-                    </div>
-                    <div style='font-size: 12px; color: #9ca3af; margin-top: 12px; 
-                               padding-top: 12px; border-top: 2px solid #f3f4f6;'>
-                        <span style='font-weight: 700; color: #1f2937;'>{hired_count}</span> nhận việc / 
-                        <span style='font-weight: 700; color: #1f2937;'>{completed_applications}</span> đơn hoàn thành
-                    </div>
-                </div>
-            </div>
-            <style>
-            @keyframes bounce {{
-                0%, 100% {{ transform: translateY(0); }}
-                50% {{ transform: translateY(-10px); }}
-            }}
-            </style>
-            """, unsafe_allow_html=True)
     else:
         st.info("Chưa có dữ liệu để hiển thị pipeline funnel")
 
