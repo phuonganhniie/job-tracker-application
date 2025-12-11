@@ -93,34 +93,79 @@ try:
     by_source = analytics.get("by_source", [])
     timeline = analytics.get("timeline", [])
     
-    # Summary metrics with custom styling
+    # Summary metrics with custom styling - Enhanced header
     st.markdown("""
-    <h2 style='font-size: 32px; font-weight: 800; color: #111827; 
-               margin-bottom: 25px; letter-spacing: -1px;'>
-        Tổng quan nhanh
-    </h2>
+    <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                padding: 35px 40px; border-radius: 20px; margin-bottom: 35px;
+                box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.2);'>
+        <h2 style='font-size: 38px; font-weight: 900; color: white; 
+                   margin: 0 0 10px 0; letter-spacing: -1.5px;
+                   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);'>
+            ⚡ Tổng quan nhanh
+        </h2>
+        <p style='color: rgba(255, 255, 255, 0.85); font-size: 15px; margin: 0; font-weight: 500;'>
+            Chỉ số quan trọng về quá trình ứng tuyển của bạn
+        </p>
+    </div>
     """, unsafe_allow_html=True)
     
-    # Row 1: Main metrics
+    # Row 1: Main metrics with enhanced design
     col1, col2, col3 = st.columns(3)
     
     with col1:
         st.markdown("""
         <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                    padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>
-            <h3 style='color: white; margin: 0; font-size: 18px;'>📝 Tổng đơn ứng tuyển</h3>
-            <h1 style='color: white; margin: 10px 0; font-size: 48px; font-weight: bold;'>{}</h1>
-            <p style='color: #e0e0e0; margin: 0; font-size: 14px;'>Tất cả đơn đã nộp</p>
+                    padding: 35px 30px; border-radius: 20px; text-align: center; 
+                    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+                    border: 2px solid rgba(255, 255, 255, 0.15);'>
+            <div style='background: rgba(255, 255, 255, 0.2); 
+                       width: 60px; height: 60px; border-radius: 50%; 
+                       margin: 0 auto 20px; display: flex; align-items: center; 
+                       justify-content: center; font-size: 32px;
+                       backdrop-filter: blur(10px);'>
+                📝
+            </div>
+            <h3 style='color: rgba(255, 255, 255, 0.95); margin: 0 0 12px 0; 
+                      font-size: 15px; font-weight: 700; text-transform: uppercase; 
+                      letter-spacing: 1.5px;'>
+                Tổng đơn ứng tuyển
+            </h3>
+            <h1 style='color: white; margin: 0 0 15px 0; font-size: 64px; font-weight: 900; 
+                      line-height: 1; text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);'>
+                {}
+            </h1>
+            <p style='color: rgba(255, 255, 255, 0.8); margin: 0; font-size: 14px; font-weight: 600;'>
+                Tất cả đơn đã nộp
+            </p>
         </div>
         """.format(summary.get("total_applications", 0)), unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
         <div style='background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
-                    padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>
-            <h3 style='color: white; margin: 0; font-size: 18px;'>⚡ Đang xử lý</h3>
-            <h1 style='color: white; margin: 10px 0; font-size: 48px; font-weight: bold;'>{}</h1>
-            <p style='color: #e0e0e0; margin: 0; font-size: 14px;'>Applied → Offer</p>
+                    padding: 35px 30px; border-radius: 20px; text-align: center; 
+                    box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+                    border: 2px solid rgba(255, 255, 255, 0.15);'>
+            <div style='background: rgba(255, 255, 255, 0.2); 
+                       width: 60px; height: 60px; border-radius: 50%; 
+                       margin: 0 auto 20px; display: flex; align-items: center; 
+                       justify-content: center; font-size: 32px;
+                       backdrop-filter: blur(10px);'>
+                ⚡
+            </div>
+            <h3 style='color: rgba(255, 255, 255, 0.95); margin: 0 0 12px 0; 
+                      font-size: 15px; font-weight: 700; text-transform: uppercase; 
+                      letter-spacing: 1.5px;'>
+                Đang xử lý
+            </h3>
+            <h1 style='color: white; margin: 0 0 15px 0; font-size: 64px; font-weight: 900; 
+                      line-height: 1; text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);'>
+                {}
+            </h1>
+            <p style='color: rgba(255, 255, 255, 0.8); margin: 0; font-size: 14px; font-weight: 600;'>
+                Applied → Offer
+            </p>
         </div>
         """.format(summary.get("active_applications", 0)), unsafe_allow_html=True)
     
@@ -128,10 +173,28 @@ try:
         success_rate = summary.get('success_rate', 0)
         st.markdown("""
         <div style='background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
-                    padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>
-            <h3 style='color: white; margin: 0; font-size: 18px;'>🎯 Tỷ lệ thành công</h3>
-            <h1 style='color: white; margin: 10px 0; font-size: 48px; font-weight: bold;'>{:.1f}%</h1>
-            <p style='color: #e0e0e0; margin: 0; font-size: 14px;'>Hired / (Hired + Rejected)</p>
+                    padding: 35px 30px; border-radius: 20px; text-align: center; 
+                    box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
+                    border: 2px solid rgba(255, 255, 255, 0.15);'>
+            <div style='background: rgba(255, 255, 255, 0.2); 
+                       width: 60px; height: 60px; border-radius: 50%; 
+                       margin: 0 auto 20px; display: flex; align-items: center; 
+                       justify-content: center; font-size: 32px;
+                       backdrop-filter: blur(10px);'>
+                🎯
+            </div>
+            <h3 style='color: rgba(255, 255, 255, 0.95); margin: 0 0 12px 0; 
+                      font-size: 15px; font-weight: 700; text-transform: uppercase; 
+                      letter-spacing: 1.5px;'>
+                Tỷ lệ thành công
+            </h3>
+            <h1 style='color: white; margin: 0 0 15px 0; font-size: 64px; font-weight: 900; 
+                      line-height: 1; text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);'>
+                {:.1f}%
+            </h1>
+            <p style='color: rgba(255, 255, 255, 0.8); margin: 0; font-size: 14px; font-weight: 600;'>
+                Hired / (Hired + Rejected)
+            </p>
         </div>
         """.format(success_rate), unsafe_allow_html=True)
     
