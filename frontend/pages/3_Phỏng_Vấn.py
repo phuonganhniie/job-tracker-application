@@ -230,11 +230,19 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.3);
         backdrop-filter: blur(10px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+        letter-spacing: 0.01em;
+        line-height: 1.5;
     }
     
     .stButton > button:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    
+    .stButton > button:active {
+        transform: translateY(-1px);
     }
     
     .stButton > button[kind="primary"] {
@@ -247,6 +255,18 @@ st.markdown("""
     .stButton > button[kind="primary"]:hover {
         box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
         filter: brightness(1.1);
+    }
+    
+    .stButton > button[kind="secondary"] {
+        background: rgba(255, 255, 255, 0.9);
+        color: #374151;
+        border: 1.5px solid rgba(226, 232, 240, 0.8);
+    }
+    
+    .stButton > button[kind="secondary"]:hover {
+        background: rgba(255, 255, 255, 1);
+        border-color: #667eea;
+        color: #667eea;
     }
     
     /* Content sections */
@@ -334,12 +354,45 @@ st.markdown("""
             font-size: 1.75rem;
         }
         
+        .page-subtitle {
+            font-size: 0.95rem;
+        }
+        
         .stat-card {
             padding: 1.25rem;
         }
         
         .stat-value {
             font-size: 2rem;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+        }
+        
+        /* Stack columns on mobile */
+        [data-testid="column"] {
+            min-width: 100% !important;
+            flex: 1 1 100% !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .page-header {
+            padding: 1.25rem;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+        }
+        
+        .stButton > button {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
         }
     }
     </style>
@@ -466,10 +519,10 @@ else:
             </div>
         """, unsafe_allow_html=True)
     
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
     
     # Main content with sidebar calendar
-    main_col, calendar_col = st.columns([3, 1])
+    main_col, calendar_col = st.columns([2.5, 1], gap="large")
     
     with calendar_col:
         # Add button
@@ -477,14 +530,14 @@ else:
             st.session_state.adding_interview = True
             st.rerun()
         
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
         
         # Mini calendar
         render_mini_calendar(interviews)
         
         # Show interviews on selected date
         if st.session_state.get("selected_calendar_date"):
-            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
             render_interviews_on_date(interviews, st.session_state.selected_calendar_date)
     
     with main_col:
@@ -492,34 +545,61 @@ else:
         tab1, tab2, tab3 = st.tabs(["⏰ Sắp tới", "📋 Tất cả", "📊 Theo Job"])
         
         with tab1:
-            st.markdown("### ⏰ Phỏng vấn sắp tới (7 ngày)")
+            st.markdown("""
+                <div style="
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    color: #1f2937;
+                    margin-bottom: 20px;
+                    letter-spacing: -0.02em;
+                    line-height: 1.4;
+                ">
+                    ⏰ Phỏng vấn sắp tới (7 ngày)
+                </div>
+            """, unsafe_allow_html=True)
             render_upcoming_interviews(upcoming, jobs_map)
         
         with tab2:
-            st.markdown("### 📋 Tất cả phỏng vấn")
+            st.markdown("""
+                <div style="
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    color: #1f2937;
+                    margin-bottom: 20px;
+                    letter-spacing: -0.02em;
+                    line-height: 1.4;
+                ">
+                    📋 Tất cả phỏng vấn
+                </div>
+            """, unsafe_allow_html=True)
             
             # Filters
             with st.expander("🔍 Bộ lọc", expanded=False):
-                filter_col1, filter_col2, filter_col3 = st.columns(3)
+                filter_col1, filter_col2, filter_col3 = st.columns(3, gap="medium")
                 
                 with filter_col1:
                     filter_type = st.selectbox(
                         "Loại phỏng vấn",
                         options=["Tất cả", "Phone Screening", "Video Call", "Technical Test", 
-                                 "Onsite Interview", "Final Round", "HR Interview"]
+                                 "Onsite Interview", "Final Round", "HR Interview"],
+                        help="Lọc theo loại phỏng vấn"
                     )
                 
                 with filter_col2:
                     filter_result = st.selectbox(
                         "Kết quả",
-                        options=["Tất cả", "Pending", "Passed", "Failed"]
+                        options=["Tất cả", "Pending", "Passed", "Failed"],
+                        help="Lọc theo kết quả phỏng vấn"
                     )
                 
                 with filter_col3:
                     filter_job = st.selectbox(
                         "Công việc",
-                        options=["Tất cả"] + [f"{j['company_name']} - {j['job_title']}" for j in jobs_map.values()]
+                        options=["Tất cả"] + [f"{j['company_name']} - {j['job_title']}" for j in jobs_map.values()],
+                        help="Lọc theo công việc"
                     )
+            
+            st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
             
             # Apply filters
             filtered_interviews = interviews
@@ -541,7 +621,18 @@ else:
             render_interview_list(filtered_interviews, jobs_map, key_prefix="all")
         
         with tab3:
-            st.markdown("### 📊 Phỏng vấn theo Job")
+            st.markdown("""
+                <div style="
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    color: #1f2937;
+                    margin-bottom: 20px;
+                    letter-spacing: -0.02em;
+                    line-height: 1.4;
+                ">
+                    📊 Phỏng vấn theo Job
+                </div>
+            """, unsafe_allow_html=True)
             
             # Group by job
             job_interviews = {}

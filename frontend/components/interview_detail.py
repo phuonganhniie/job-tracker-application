@@ -18,13 +18,13 @@ def format_datetime_display(dt_str: str) -> str:
 
 
 def get_result_badge(result: Optional[str]) -> str:
-    """Get HTML badge for result"""
+    """Get HTML badge for result with premium styling"""
     if result == "Passed":
-        return '<span style="background: #d1fae5; color: #065f46; padding: 6px 16px; border-radius: 20px; font-weight: 600;">✅ Passed</span>'
+        return '<span style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 8px 20px; border-radius: 24px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 6px;"><span style="font-size: 1.1rem;">✅</span>Passed</span>'
     elif result == "Failed":
-        return '<span style="background: #fee2e2; color: #991b1b; padding: 6px 16px; border-radius: 20px; font-weight: 600;">❌ Failed</span>'
+        return '<span style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 8px 20px; border-radius: 24px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 6px;"><span style="font-size: 1.1rem;">❌</span>Failed</span>'
     else:
-        return '<span style="background: #fef3c7; color: #92400e; padding: 6px 16px; border-radius: 20px; font-weight: 600;">⏳ Pending</span>'
+        return '<span style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 8px 20px; border-radius: 24px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 6px;"><span style="font-size: 1.1rem;">⏳</span>Pending</span>'
 
 
 def render_interview_detail(interview_id: int):
@@ -247,14 +247,14 @@ def render_interview_detail(interview_id: int):
         pass
     
     # Header with back button
-    col1, col2 = st.columns([1, 5])
+    col1, col2 = st.columns([0.5, 5.5], gap="medium")
     with col1:
-        if st.button("← Quay lại", use_container_width=True):
+        if st.button("⬅️", key="back_btn", use_container_width=True, help="Quay lại danh sách"):
             if "selected_interview_id" in st.session_state:
                 del st.session_state.selected_interview_id
             st.rerun()
     
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
     
     # Main content
     st.markdown('<div class="interview-detail-card">', unsafe_allow_html=True)
@@ -262,16 +262,16 @@ def render_interview_detail(interview_id: int):
     # Header
     result_badge = get_result_badge(interview.get("result"))
     st.markdown(f"""
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <div>
-                <h2 style="margin: 0; color: #1f2937;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 250px;">
+                <h2 style="margin: 0 0 12px 0; color: #1f2937; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.3;">
                     Round {interview.get('round_number', 1)}: {interview.get('interview_type', 'Interview')}
                 </h2>
-                <p style="margin: 0.5rem 0 0 0; color: #6b7280;">
-                    📅 {format_datetime_display(interview.get('scheduled_date', ''))}
+                <p style="margin: 0; color: #6b7280; font-size: 1rem; display: flex; align-items: center; gap: 8px; line-height: 1.6;">
+                    <span style="font-size: 1.1rem;">📅</span> {format_datetime_display(interview.get('scheduled_date', ''))}
                 </p>
             </div>
-            <div>{result_badge}</div>
+            <div style="flex-shrink: 0;">{result_badge}</div>
         </div>
     """, unsafe_allow_html=True)
     
@@ -358,49 +358,47 @@ def render_interview_detail(interview_id: int):
     st.markdown('</div>', unsafe_allow_html=True)
     
     # Action buttons
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns([1, 1, 1, 2], gap="medium")
     
     with col1:
-        st.markdown("""
-            <style>
-            .edit-btn button {
-                background: linear-gradient(135deg, #667eea, #764ba2) !important;
-                color: white !important;
-                border: none !important;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-        if st.button("✏️ Chỉnh sửa", key="edit_interview", use_container_width=True):
+        if st.button("✏️ Chỉnh sửa", key="edit_interview", use_container_width=True, help="Chỉnh sửa thông tin phỏng vấn"):
             st.session_state.editing_interview_id = interview_id
             st.rerun()
     
     with col2:
-        st.markdown("""
-            <style>
-            .result-btn button {
-                background: linear-gradient(135deg, #10b981, #059669) !important;
-                color: white !important;
-                border: none !important;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-        if st.button("📊 Cập nhật kết quả", key="update_result", use_container_width=True):
+        if st.button("📊 Kết quả", key="update_result", use_container_width=True, type="primary", help="Cập nhật kết quả phỏng vấn"):
             st.session_state.update_interview_id = interview_id
             st.rerun()
     
     with col3:
-        if st.button("🗑️ Xóa", key="delete_interview", use_container_width=True, type="secondary"):
+        if st.button("🗑️ Xóa", key="delete_interview", use_container_width=True, type="secondary", help="Xóa phỏng vấn này"):
             st.session_state.confirm_delete_interview = interview_id
             st.rerun()
     
     # Delete confirmation
     if st.session_state.get("confirm_delete_interview") == interview_id:
-        st.warning("⚠️ Bạn có chắc chắn muốn xóa phỏng vấn này?")
-        col1, col2, col3 = st.columns([1, 1, 4])
+        st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+        st.markdown("""
+            <div style="
+                background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.08));
+                padding: 20px;
+                border-radius: 16px;
+                border-left: 4px solid #ef4444;
+                margin-bottom: 16px;
+            ">
+                <div style="font-weight: 700; color: #991b1b; font-size: 1.05rem; margin-bottom: 8px;">
+                    ⚠️ Xác nhận xóa
+                </div>
+                <div style="color: #dc2626; font-size: 0.95rem; line-height: 1.6;">
+                    Bạn có chắc chắn muốn xóa phỏng vấn này không? Hành động này không thể hoàn tác.
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 1, 3], gap="medium")
         with col1:
-            if st.button("✅ Xác nhận", type="primary", use_container_width=True):
+            if st.button("✅ Xác nhận", type="primary", use_container_width=True, help="Xác nhận xóa phỏng vấn"):
                 try:
                     interview_service.delete_interview(interview_id)
                     st.success("✅ Đã xóa phỏng vấn!")
@@ -411,6 +409,6 @@ def render_interview_detail(interview_id: int):
                 except Exception as e:
                     st.error(f"❌ Lỗi: {str(e)}")
         with col2:
-            if st.button("❌ Hủy", use_container_width=True):
+            if st.button("❌ Hủy", use_container_width=True, help="Hủy thao tác"):
                 del st.session_state.confirm_delete_interview
                 st.rerun()

@@ -212,7 +212,25 @@ def render_interview_list(
         key_prefix: Prefix for widget keys to avoid duplicates
     """
     if not interviews:
-        st.info("📭 Không có phỏng vấn nào.")
+        st.markdown("""
+            <div style="
+                text-align: center;
+                padding: 48px 24px;
+                background: linear-gradient(135deg, rgba(243, 244, 246, 0.95), rgba(249, 250, 251, 0.9));
+                backdrop-filter: blur(10px);
+                border-radius: 20px;
+                border: 2px dashed rgba(156, 163, 175, 0.3);
+                margin: 24px 0;
+            ">
+                <div style="font-size: 3.5rem; margin-bottom: 16px; opacity: 0.5;">📭</div>
+                <div style="color: #6b7280; font-weight: 600; font-size: 1.05rem; margin-bottom: 8px;">
+                    Không có phỏng vấn nào
+                </div>
+                <div style="color: #9ca3af; font-size: 0.9rem;">
+                    Hãy thêm phỏng vấn mới để bắt đầu theo dõi
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
         return
     
     # Generate unique prefix if not provided
@@ -227,21 +245,21 @@ def render_interview_list(
         
         render_interview_card(interview, job_info, show_job)
         
-        # Action buttons
-        col1, col2, col3 = st.columns([1, 1, 4])
+        # Action buttons - compact and clean
+        col1, col2, col3 = st.columns([1, 1, 3], gap="small")
         with col1:
-            if st.button("📝 Chi tiết", key=f"{key_prefix}_detail_{interview['id']}", use_container_width=True):
+            if st.button("Chi tiết", key=f"{key_prefix}_detail_{interview['id']}", type="secondary", use_container_width=True):
                 if on_select:
                     on_select(interview["id"])
                 else:
                     st.session_state.selected_interview_id = interview["id"]
                     st.rerun()
         with col2:
-            if st.button("📊 Cập nhật", key=f"{key_prefix}_update_{interview['id']}", use_container_width=True):
+            if st.button("Cập nhật", key=f"{key_prefix}_update_{interview['id']}", type="primary", use_container_width=True):
                 st.session_state.update_interview_id = interview["id"]
                 st.rerun()
         
-        st.markdown("<hr style='border: none; border-top: 1px solid #f3f4f6; margin: 0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 16px; border-bottom: 1px solid rgba(0, 0, 0, 0.04); margin: 12px 0;'></div>", unsafe_allow_html=True)
 
 
 def render_upcoming_interviews(interviews: List[Dict], jobs_map: Optional[Dict[int, Dict]] = None):

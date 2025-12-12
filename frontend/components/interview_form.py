@@ -37,6 +37,18 @@ def render_interview_form(
     """
     is_edit = interview is not None
     
+    # Back button
+    col1, col2 = st.columns([0.5, 5.5], gap="medium")
+    with col1:
+        if st.button("⬅️", key="form_back_btn", use_container_width=True, help="Quay lại"):
+            if "editing_interview_id" in st.session_state:
+                del st.session_state.editing_interview_id
+            if "adding_interview" in st.session_state:
+                del st.session_state.adding_interview
+            st.rerun()
+    
+    st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+    
     # Apply form CSS - Liquid glassmorphism style
     st.markdown("""
         <style>
@@ -150,6 +162,14 @@ def render_interview_form(
         .stTextArea > div > div > textarea {
             min-height: 120px !important;
             line-height: 1.6 !important;
+            resize: vertical !important;
+        }
+        
+        /* Placeholder styling */
+        .stTextInput input::placeholder,
+        .stTextArea textarea::placeholder {
+            color: #9ca3af !important;
+            opacity: 1 !important;
         }
         
         /* Label styling */
@@ -282,7 +302,7 @@ def render_interview_form(
         # Section 2: Interview Details
         st.markdown('<div class="form-section-title">📋 Thông tin phỏng vấn</div>', unsafe_allow_html=True)
         
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2, gap="medium")
         
         with col1:
             round_number = st.number_input(
@@ -290,22 +310,24 @@ def render_interview_form(
                 min_value=1,
                 max_value=10,
                 value=interview.get("round_number", 1) if is_edit else 1,
-                step=1
+                step=1,
+                help="Nhập số vòng phỏng vấn (1-10)"
             )
         
         with col2:
             interview_type = st.selectbox(
-                "Loại phỏng vấn",
+                "Loại phỏng vấn *",
                 options=INTERVIEW_TYPES,
                 index=INTERVIEW_TYPES.index(interview.get("interview_type")) 
                     if is_edit and interview.get("interview_type") in INTERVIEW_TYPES 
-                    else 0
+                    else 0,
+                help="Chọn loại hình phỏng vấn"
             )
         
         # Section 3: Schedule
         st.markdown('<div class="form-section-title">📅 Lịch hẹn</div>', unsafe_allow_html=True)
         
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2, gap="medium")
         
         with col1:
             # Parse existing date
@@ -325,48 +347,54 @@ def render_interview_form(
             
             scheduled_date = st.date_input(
                 "Ngày phỏng vấn *",
-                value=default_date
+                value=default_date,
+                help="Chọn ngày diễn ra phỏng vấn"
             )
         
         with col2:
             scheduled_time = st.time_input(
                 "Giờ phỏng vấn *",
-                value=default_time
+                value=default_time,
+                help="Chọn giờ bắt đầu phỏng vấn"
             )
         
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2, gap="medium")
         
         with col1:
             location = st.text_input(
-                "Địa điểm",
+                "Location địa điểm",
                 value=interview.get("location", "") if is_edit else "",
-                placeholder="VD: Tầng 5, Tòa nhà ABC..."
+                placeholder="VD: Tầng 5, Tòa nhà ABC...",
+                help="Nhập địa điểm phỏng vấn"
             )
         
         with col2:
             meeting_link = st.text_input(
                 "Link meeting",
                 value=interview.get("meeting_link", "") if is_edit else "",
-                placeholder="https://meet.google.com/..."
+                placeholder="https://meet.google.com/...",
+                help="Nhập link cuộc họp online"
             )
         
         # Section 4: Interviewer
         st.markdown('<div class="form-section-title">👤 Người phỏng vấn</div>', unsafe_allow_html=True)
         
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2, gap="medium")
         
         with col1:
             interviewer_name = st.text_input(
                 "Tên người phỏng vấn",
                 value=interview.get("interviewer_name", "") if is_edit else "",
-                placeholder="VD: Nguyễn Văn A"
+                placeholder="VD: Nguyễn Văn A",
+                help="Nhập tên người phỏng vấn"
             )
         
         with col2:
             interviewer_title = st.text_input(
                 "Chức vụ",
                 value=interview.get("interviewer_title", "") if is_edit else "",
-                placeholder="VD: Senior Engineer, HR Manager..."
+                placeholder="VD: Senior Engineer, HR Manager...",
+                help="Nhập chức vụ của người phỏng vấn"
             )
         
         # Section 5: Notes & Result (for edit mode)
@@ -376,11 +404,12 @@ def render_interview_form(
             "Ghi chú chuẩn bị",
             value=interview.get("preparation_notes", "") if is_edit else "",
             placeholder="Những điều cần chuẩn bị, câu hỏi dự kiến...",
-            height=100
+            height=100,
+            help="Ghi chú các nội dung cần chuẩn bị cho phỏng vấn"
         )
         
         if is_edit:
-            col1, col2 = st.columns(2)
+            col1, col2 = st.columns([1, 1.5], gap="medium")
             
             with col1:
                 result = st.selectbox(
@@ -388,7 +417,8 @@ def render_interview_form(
                     options=RESULT_OPTIONS,
                     index=RESULT_OPTIONS.index(interview.get("result")) 
                         if interview.get("result") in RESULT_OPTIONS 
-                        else 0
+                        else 0,
+                    help="Chọn kết quả phỏng vấn"
                 )
             
             with col2:
@@ -396,23 +426,25 @@ def render_interview_form(
                     "Feedback",
                     value=interview.get("feedback", "") if is_edit else "",
                     placeholder="Nhận xét sau phỏng vấn...",
-                    height=100
+                    height=100,
+                    help="Ghi chú nhận xét sau phỏng vấn"
                 )
         
         # Submit buttons
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
         
-        col1, col2, col3 = st.columns([2, 2, 4])
+        col1, col2, col3 = st.columns([1.5, 1.5, 3], gap="medium")
         
         with col1:
             submitted = st.form_submit_button(
                 "💾 Lưu" if is_edit else "➕ Thêm mới",
                 use_container_width=True,
-                type="primary"
+                type="primary",
+                help="Lưu thông tin phỏng vấn"
             )
         
         with col2:
-            if st.form_submit_button("❌ Hủy", use_container_width=True):
+            if st.form_submit_button("❌ Hủy", use_container_width=True, help="Hủy và quay lại"):
                 if "editing_interview_id" in st.session_state:
                     del st.session_state.editing_interview_id
                 if "adding_interview" in st.session_state:
@@ -471,6 +503,16 @@ def render_interview_form(
 def render_result_update_form(interview: Dict, on_success: Optional[callable] = None):
     """Quick form to update interview result with enhanced styling"""
     
+    # Back button
+    col1, col2 = st.columns([0.5, 5.5], gap="medium")
+    with col1:
+        if st.button("⬅️", key="result_back_btn", use_container_width=True, help="Quay lại"):
+            if "update_interview_id" in st.session_state:
+                del st.session_state.update_interview_id
+            st.rerun()
+    
+    st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+    
     st.markdown("""
         <div style="
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.95));
@@ -519,24 +561,26 @@ def render_result_update_form(interview: Dict, on_success: Optional[callable] = 
     
     with st.form(key="result_form"):
         result = st.selectbox(
-            "Kết quả",
+            "Kết quả *",
             options=RESULT_OPTIONS,
             index=RESULT_OPTIONS.index(interview.get("result")) 
                 if interview.get("result") in RESULT_OPTIONS 
-                else 0
+                else 0,
+            help="Chọn kết quả phỏng vấn"
         )
         
         feedback = st.text_area(
             "Feedback / Nhận xét",
             value=interview.get("feedback", ""),
             placeholder="Những điểm tốt, điểm cần cải thiện...",
-            height=150
+            height=150,
+            help="Ghi chú nhận xét và phản hồi sau phỏng vấn"
         )
         
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns([1.5, 1.5, 3], gap="medium")
         
         with col1:
-            if st.form_submit_button("💾 Cập nhật", use_container_width=True, type="primary"):
+            if st.form_submit_button("💾 Cập nhật", use_container_width=True, type="primary", help="Cập nhật kết quả phỏng vấn"):
                 try:
                     interview_service.update_interview_result(
                         interview["id"], 
@@ -556,7 +600,7 @@ def render_result_update_form(interview: Dict, on_success: Optional[callable] = 
                     st.error(f"❌ Lỗi: {str(e)}")
         
         with col2:
-            if st.form_submit_button("❌ Hủy", use_container_width=True):
+            if st.form_submit_button("❌ Hủy", use_container_width=True, help="Hủy và quay lại"):
                 if "update_interview_id" in st.session_state:
                     del st.session_state.update_interview_id
                 st.rerun()
