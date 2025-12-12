@@ -3,6 +3,7 @@ Job Detail Component
 Displays detailed information for a single job
 """
 import streamlit as st
+from datetime import date
 from frontend.config.settings import STATUS_COLORS
 from frontend.services.job_service import job_service
 
@@ -215,18 +216,166 @@ def render_job_detail(job_id: int):
         # Action buttons
         st.markdown("<br>", unsafe_allow_html=True)
         col1, col2, col3, col4 = st.columns(4)
+        
+        # Initialize edit mode state
+        if 'edit_mode' not in st.session_state:
+            st.session_state.edit_mode = False
+        if 'delete_confirm' not in st.session_state:
+            st.session_state.delete_confirm = False
+        
         with col1:
             if st.button("✏️ Sửa", use_container_width=True, type="primary"):
-                st.info("Chức năng đang phát triển")
+                st.session_state.edit_mode = True
+                st.rerun()
         with col2:
             if st.button("🗑️ Xóa", use_container_width=True, type="secondary"):
-                st.warning("Chức năng đang phát triển")
+                st.session_state.delete_confirm = True
+                st.rerun()
         with col3:
-            if st.button("⭐ Yêu thích", use_container_width=True, type="secondary"):
-                st.info("Chức năng đang phát triển")
+            # Toggle favorite
+            fav_label = "💔 Bỏ yêu thích" if job.get('is_favorite') else "⭐ Yêu thích"
+            if st.button(fav_label, use_container_width=True, type="secondary"):
+                try:
+                    job_service.update_job(job_id, {"is_favorite": not job.get('is_favorite', False)})
+                    st.success("✅ Đã cập nhật!")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Lỗi: {str(e)}")
         with col4:
             if st.button("📊 Analytics", use_container_width=True, type="secondary"):
                 st.info("Chức năng đang phát triển")
+        
+        # Delete confirmation dialog
+        if st.session_state.get('delete_confirm'):
+            st.markdown("---")
+            st.warning(f"⚠️ Bạn có chắc chắn muốn xóa job **{job['company_name']} - {job['job_title']}**? Hành động này không thể hoàn tác.")
+            col_yes, col_no = st.columns(2)
+            with col_yes:
+                if st.button("✅ Xác nhận xóa", use_container_width=True, type="primary"):
+                    try:
+                        job_service.delete_job(job_id)
+                        st.session_state.delete_confirm = False
+                        st.session_state.selected_job_id = None
+                        st.success("✅ Đã xóa job thành công!")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ Lỗi khi xóa: {str(e)}")
+            with col_no:
+                if st.button("❌ Hủy", use_container_width=True, type="secondary"):
+                    st.session_state.delete_confirm = False
+                    st.rerun()
+        
+        # Edit form
+        if st.session_state.get('edit_mode'):
+            st.markdown("---")
+            st.markdown("### ✏️ Chỉnh sửa thông tin job")
+            
+            with st.form("edit_job_form"):
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    edit_company = st.text_input("Tên công ty *", value=job.get('company_name', ''))
+                    edit_title = st.text_input("Vị trí *", value=job.get('job_title', ''))
+                    edit_location = st.text_input("Địa điểm", value=job.get('location', '') or '')
+                    edit_work_type = st.selectbox(
+                        "Hình thức", 
+                        ["Remote", "Hybrid", "Onsite"],
+                        index=["Remote", "Hybrid", "Onsite"].index(job.get('work_type', 'Remote')) if job.get('work_type') in ["Remote", "Hybrid", "Onsite"] else 0
+                    )
+                    edit_source = st.text_input("Nguồn", value=job.get('source', '') or '')
+                
+                with col2:
+                    status_options = ["Applied", "Screening", "Interview", "Offer", "Hired", "Rejected"]
+                    edit_status = st.selectbox(
+                        "Trạng thái",
+                        status_options,
+                        index=status_options.index(job.get('current_status', 'Applied')) if job.get('current_status') in status_options else 0
+                    )
+                    
+                    # Parse applied_date
+                    try:
+                        applied_val = date.fromisoformat(str(job.get('applied_date', date.today()))[:10])
+                    except:
+                        applied_val = date.today()
+                    edit_applied_date = st.date_input("Ngày nộp *", value=applied_val)
+                    
+                    # Parse deadline
+                    deadline_val = None
+                    if job.get('deadline'):
+                        try:
+                            deadline_val = date.fromisoformat(str(job['deadline'])[:10])
+                        except:
+                            pass
+                    edit_deadline = st.date_input("Deadline", value=deadline_val)
+                    
+                    edit_favorite = st.checkbox("⭐ Yêu thích", value=job.get('is_favorite', False))
+                
+                edit_url = st.text_input("Link bài đăng", value=job.get('job_url', '') or '')
+                edit_description = st.text_area("Mô tả công việc", value=job.get('job_description', '') or '', height=120)
+                
+                st.markdown("##### 💰 Mức lương")
+                sal_col1, sal_col2, sal_col3 = st.columns(3)
+                with sal_col1:
+                    edit_salary_min = st.number_input("Lương tối thiểu", min_value=0, value=int(float(job.get('salary_min') or 0)), step=1000000)
+                with sal_col2:
+                    edit_salary_max = st.number_input("Lương tối đa", min_value=0, value=int(float(job.get('salary_max') or 0)), step=1000000)
+                with sal_col3:
+                    currency_options = ["VND", "USD"]
+                    edit_currency = st.selectbox(
+                        "Đơn vị",
+                        currency_options,
+                        index=currency_options.index(job.get('salary_currency', 'VND')) if job.get('salary_currency') in currency_options else 0
+                    )
+                
+                st.markdown("##### 👤 Liên hệ")
+                contact_col1, contact_col2, contact_col3 = st.columns(3)
+                with contact_col1:
+                    edit_contact_person = st.text_input("Người liên hệ", value=job.get('contact_person', '') or '')
+                with contact_col2:
+                    edit_contact_email = st.text_input("Email", value=job.get('contact_email', '') or '')
+                with contact_col3:
+                    edit_contact_phone = st.text_input("SĐT", value=job.get('contact_phone', '') or '')
+                
+                btn_col1, btn_col2 = st.columns(2)
+                with btn_col1:
+                    submit_edit = st.form_submit_button("💾 Lưu thay đổi", use_container_width=True)
+                with btn_col2:
+                    cancel_edit = st.form_submit_button("❌ Hủy", use_container_width=True)
+                
+                if submit_edit:
+                    if not edit_company or not edit_title:
+                        st.error("⚠️ Vui lòng nhập đầy đủ thông tin bắt buộc (*)")
+                    else:
+                        try:
+                            update_data = {
+                                "company_name": edit_company,
+                                "job_title": edit_title,
+                                "job_url": edit_url or None,
+                                "job_description": edit_description or None,
+                                "location": edit_location or None,
+                                "work_type": edit_work_type,
+                                "salary_min": edit_salary_min if edit_salary_min > 0 else None,
+                                "salary_max": edit_salary_max if edit_salary_max > 0 else None,
+                                "salary_currency": edit_currency,
+                                "source": edit_source or None,
+                                "contact_person": edit_contact_person or None,
+                                "contact_email": edit_contact_email or None,
+                                "contact_phone": edit_contact_phone or None,
+                                "current_status": edit_status,
+                                "applied_date": str(edit_applied_date),
+                                "deadline": str(edit_deadline) if edit_deadline else None,
+                                "is_favorite": edit_favorite
+                            }
+                            job_service.update_job(job_id, update_data)
+                            st.session_state.edit_mode = False
+                            st.success("✅ Cập nhật thành công!")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"❌ Lỗi khi cập nhật: {str(e)}")
+                
+                if cancel_edit:
+                    st.session_state.edit_mode = False
+                    st.rerun()
     
     except Exception as e:
         st.error(f"⚠️ Không thể tải chi tiết job: {str(e)}")
