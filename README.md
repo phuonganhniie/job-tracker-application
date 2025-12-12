@@ -252,27 +252,6 @@ pip install -r requirements.txt
 #### Port đã được sử dụng
 - Đổi port khác: `--port 8001` cho backend hoặc `--server.port 8502` cho frontend
 
-## 📚 API Endpoints
-
-### Jobs
-- `POST /api/v1/jobs/` - Tạo job mới
-- `GET /api/v1/jobs/` - Lấy danh sách jobs (có filter & pagination)
-- `GET /api/v1/jobs/{id}` - Lấy chi tiết job
-- `PUT /api/v1/jobs/{id}` - Cập nhật job
-- `PATCH /api/v1/jobs/{id}/status` - Cập nhật trạng thái job
-- `DELETE /api/v1/jobs/{id}` - Xóa job
-- `GET /api/v1/jobs/search/{keyword}` - Tìm kiếm jobs
-
-### Analytics
-- `GET /api/v1/analytics/` - Lấy báo cáo analytics đầy đủ
-- `GET /api/v1/analytics/summary` - Thống kê tổng quan
-- `GET /api/v1/analytics/by-status` - Thống kê theo trạng thái
-- `GET /api/v1/analytics/by-source` - Thống kê theo nguồn
-- `GET /api/v1/analytics/timeline` - Timeline data
-
-### TODO: Các endpoints khác
-- Interviews, Notes, Email Templates (tương tự)
-
 ## 🧪 Testing
 
 ```powershell
