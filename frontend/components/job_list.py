@@ -188,36 +188,11 @@ def render_job_list(filters: dict):
                             st.markdown(card_html, unsafe_allow_html=True)
                             
                             # Button in columns to position at bottom left
-                            col_left, col_mid, col_right = st.columns([2, 4, 4])
+                            col_left, col_mid, col_right = st.columns([2, 6, 2])
                             with col_left:
                                 if st.button("Xem chi tiết", key=f"view_{job['id']}", use_container_width=True):
                                     st.session_state.selected_job_id = job['id']
                                     st.rerun()
-                            with col_right:
-                                # Delete button with confirm
-                                delete_key = f"delete_{job['id']}"
-                                confirm_key = f"confirm_delete_{job['id']}"
-                                
-                                if st.session_state.get(confirm_key):
-                                    # Show confirm buttons
-                                    confirm_col1, confirm_col2 = st.columns(2)
-                                    with confirm_col1:
-                                        if st.button("✅ Xóa", key=f"yes_{job['id']}", use_container_width=True, type="primary"):
-                                            try:
-                                                job_service.delete_job(job['id'])
-                                                st.session_state[confirm_key] = False
-                                                st.success(f"✅ Đã xóa job!")
-                                                st.rerun()
-                                            except Exception as e:
-                                                st.error(f"Lỗi: {str(e)}")
-                                    with confirm_col2:
-                                        if st.button("❌ Hủy", key=f"no_{job['id']}", use_container_width=True):
-                                            st.session_state[confirm_key] = False
-                                            st.rerun()
-                                else:
-                                    if st.button("🗑️ Xóa", key=delete_key, use_container_width=True, type="secondary"):
-                                        st.session_state[confirm_key] = True
-                                        st.rerun()
             
             st.markdown("<br>", unsafe_allow_html=True)
             
