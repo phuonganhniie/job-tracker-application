@@ -107,6 +107,19 @@ def render_interview_card(interview: Dict, job_info: Optional[Dict] = None, show
     result_text = interview.get('result') or 'Pending'
     
     card_html = f"""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * {{
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        }}
+        
+        @keyframes float {{
+            0%, 100% {{ transform: translateY(0) rotate(0deg); }}
+            50% {{ transform: translateY(-20px) rotate(5deg); }}
+        }}
+        </style>
+        
         <div style="
             background: {card_gradient};
             backdrop-filter: blur(20px) saturate(180%);
@@ -122,6 +135,7 @@ def render_interview_card(interview: Dict, job_info: Optional[Dict] = None, show
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         " onmouseover="this.style.transform='translateY(-5px) scale(1.01)'; this.style.boxShadow='0 20px 40px {glow_color}, 0 8px 20px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1), inset -3px 0 0 {border_color}';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px {glow_color}, 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset -3px 0 0 {border_color}';">
             
             <!-- Animated gradient overlay -->
@@ -140,10 +154,10 @@ def render_interview_card(interview: Dict, job_info: Optional[Dict] = None, show
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span style="font-size: 2rem; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.2) rotate(10deg)';" onmouseout="this.style.transform='scale(1) rotate(0deg)';">{type_icon}</span>
                     <div>
-                        <div style="font-weight: 700; font-size: 1.1rem; color: #1f2937; letter-spacing: -0.01em;">
+                        <div style="font-weight: 600; font-size: 1.05rem; color: #1f2937; letter-spacing: -0.02em; line-height: 1.4;">
                             Round {interview.get('round_number', 1)}: {interview.get('interview_type', 'Interview')}
                         </div>
-                        <div style="font-size: 0.9rem; color: #6b7280; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 500;">
                             <span style="display: inline-flex; align-items: center; gap: 4px;">📅 {date_str}</span>
                             <span style="color: #d1d5db;">•</span>
                             <span style="display: inline-flex; align-items: center; gap: 4px;">⏰ {time_str}</span>
@@ -153,14 +167,14 @@ def render_interview_card(interview: Dict, job_info: Optional[Dict] = None, show
                 <span style="
                     background: {result_bg};
                     color: {result_color};
-                    padding: 6px 16px;
+                    padding: 6px 14px;
                     border-radius: 20px;
-                    font-size: 0.8rem;
-                    font-weight: 700;
+                    font-size: 0.75rem;
+                    font-weight: 600;
                     box-shadow: 0 4px 12px {glow_color};
                     border: 1px solid rgba(255, 255, 255, 0.5);
                     transition: all 0.3s ease;
-                    letter-spacing: 0.02em;
+                    letter-spacing: 0.01em;
                 " onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';">
                     {result_icon} {result_text}
                 </span>
@@ -171,23 +185,17 @@ def render_interview_card(interview: Dict, job_info: Optional[Dict] = None, show
             <div style="
                 display: flex; 
                 gap: 1rem; 
-                font-size: 0.875rem; 
+                font-size: 0.85rem; 
                 color: #6b7280; 
                 flex-wrap: wrap;
                 padding-top: 0.75rem;
                 border-top: 1px solid rgba(0, 0, 0, 0.05);
                 position: relative;
+                font-weight: 500;
             ">
                 {details_html}
             </div>
         </div>
-        
-        <style>
-        @keyframes float {{
-            0%, 100% {{ transform: translateY(0) rotate(0deg); }}
-            50% {{ transform: translateY(-20px) rotate(5deg); }}
-        }}
-        </style>
     """
     
     # Use components.html for reliable rendering

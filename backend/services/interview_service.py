@@ -135,7 +135,10 @@ class InterviewService:
         """
         Update interview result and feedback
         result should be: Passed, Failed, or Pending
+        If result is Failed/Rejected, also update job status to Rejected
         """
+        from backend.models.job import Job
+        
         interview = db.query(Interview).filter(Interview.id == interview_id).first()
         if not interview:
             return None
@@ -143,6 +146,12 @@ class InterviewService:
         interview.result = result
         if feedback:
             interview.feedback = feedback
+        
+        # If interview failed/rejected, update job status to Rejected
+        if result in ["Failed", "Rejected"]:
+            job = db.query(Job).filter(Job.id == interview.job_id).first()
+            if job and job.status != "Rejected":
+                job.status = "Rejected"
         
         db.commit()
         db.refresh(interview)
@@ -172,10 +181,18 @@ class InterviewService:
         
         interviews = query.all()
         
+        # Debug: print all result values
+        print(f"DEBUG: Total interviews: {len(interviews)}")
+        result_values = [i.result for i in interviews]
+        print(f"DEBUG: All result values: {result_values}")
+        
         total = len(interviews)
         passed = sum(1 for i in interviews if i.result == "Passed")
-        failed = sum(1 for i in interviews if i.result == "Failed")
+        # Count both "Failed" and "Rejected" as failed
+        failed = sum(1 for i in interviews if i.result in ["Failed", "Rejected"])
         pending = sum(1 for i in interviews if i.result == "Pending" or i.result is None)
+        
+        print(f"DEBUG: passed={passed}, failed={failed}, pending={pending}")
         
         # Count by type
         by_type = {}
