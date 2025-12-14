@@ -183,13 +183,12 @@ def seed_jobs(db):
     
     db.add_all(jobs)
     db.commit()
+    
+    # Refresh all jobs to get their IDs
+    for job in jobs:
+        db.refresh(job)
+    
     logger.info(f"✅ Created {len(jobs)} production jobs")
-    
-    # Add notes for jobs that have them
-    for i, job_data_with_notes in enumerate([j for j in jobs_data if "notes" in str(j)]):
-        # Notes will be added in seed_notes function
-        pass
-    
     return jobs
 
 
@@ -202,7 +201,7 @@ def seed_interviews(db, jobs):
     
     if not vng_job:
         logger.info("⚠️ No jobs found for interviews, skipping")
-        return
+        return []
     
     interviews_data = [
         {
@@ -236,8 +235,108 @@ def seed_interviews(db, jobs):
     
     db.add_all(interviews)
     db.commit()
+    
+    # Refresh to get IDs
+    for interview in interviews:
+        db.refresh(interview)
+    
     logger.info(f"✅ Created {len(interviews)} production interviews")
     return interviews
+
+
+def seed_notes(db, jobs, interviews):
+    """Seed production notes"""
+    logger.info("📝 Seeding production notes...")
+    
+    # Find specific jobs
+    shopee_job = next((j for j in jobs if j.company_name == "Shopee Vietnam"), None)
+    momo_job = next((j for j in jobs if j.company_name == "Momo"), None)
+    base_job = next((j for j in jobs if j.company_name == "Base.vn"), None)
+    
+    notes = []
+    
+    # Job notes
+    if shopee_job:
+        notes.append(Note(
+            job_id=shopee_job.id,
+            note_type="decision",
+            title="Offer Decision Deadline",
+            content="Offer expires: 2025-12-20. Need to respond by then. Considering: Good for internship experience, but lower salary compared to Momo full-time offer.",
+            priority="High"
+        ))
+    
+    if momo_job:
+        notes.append(Note(
+            job_id=momo_job.id,
+            note_type="decision",
+            title="Best Offer - Final Decision",
+            content="Best offer so far: 18M gross + 13th month + performance bonus. Fintech product team. Great for career growth. Considering between Momo (full-time) and Shopee (internship).",
+            priority="High"
+        ))
+    
+    if base_job:
+        notes.append(Note(
+            job_id=base_job.id,
+            note_type="feedback",
+            title="Rejection Feedback",
+            content="Feedback from technical test: Good Python knowledge but weak on data structures & algorithms. Should practice more on LeetCode before applying to similar positions.",
+            priority="Medium"
+        ))
+    
+    # Interview notes
+    if interviews and len(interviews) > 0:
+        notes.append(Note(
+            interview_id=interviews[0].id,
+            note_type="preparation",
+            title="Technical Interview Preparation",
+            content="Topics to review: 1) FastAPI advanced features 2) System Design principles 3) Database optimization techniques 4) Docker & deployment. Prepare demo project to showcase.",
+            priority="High"
+        ))
+    
+    db.add_all(notes)
+    db.commit()
+    logger.info(f"✅ Created {len(notes)} production notes")
+    return notes
+
+
+def seed_applications(db, jobs):
+    """Seed application status history"""
+    logger.info("📝 Seeding application history...")
+    
+    from backend.models.application import Application
+    
+    # Find VNG job to add status history
+    vng_job = next((j for j in jobs if j.company_name == "VNG Corporation"), None)
+    
+    if not vng_job:
+        logger.info("⚠️ No jobs found for applications, skipping")
+        return []
+    
+    applications = [
+        Application(
+            job_id=vng_job.id,
+            status="Applied",
+            status_date=datetime.now() - timedelta(days=15),
+            notes="Submitted application via LinkedIn. Resume reviewed and customized for backend role."
+        ),
+        Application(
+            job_id=vng_job.id,
+            status="Screening",
+            status_date=datetime.now() - timedelta(days=10),
+            notes="HR reached out for phone screening. Discussed background, salary expectations."
+        ),
+        Application(
+            job_id=vng_job.id,
+            status="Interview",
+            status_date=datetime.now() - timedelta(days=7),
+            notes="Passed phone screening. Scheduled for technical interview next week."
+        ),
+    ]
+    
+    db.add_all(applications)
+    db.commit()
+    logger.info(f"✅ Created {len(applications)} application history records")
+    return applications
 
 
 def seed_email_templates(db):
@@ -322,14 +421,20 @@ def main():
         # Optional: Clear existing data (comment out if you want to keep existing data)
         # clear_existing_data(db)
         
-        # Seed data
+        # Seed data in correct order (respect foreign key constraints)
         jobs = seed_jobs(db)
-        seed_interviews(db, jobs)
+        interviews = seed_interviews(db, jobs)
+        seed_notes(db, jobs, interviews)
+        seed_applications(db, jobs)
         seed_email_templates(db)
         
         db.close()
         
         logger.info("✅ Database seeded successfully!")
+        logger.info("📊 Summary:")
+        logger.info(f"  - Jobs: {len(jobs)}")
+        logger.info(f"  - Interviews: {len(interviews)}")
+        logger.info(f"  - Email Templates: 3")
         logger.info("📊 Check your application to see the data")
         
     except Exception as e:
