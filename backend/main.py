@@ -64,10 +64,18 @@ def startup_event():
                 from backend.models.interview import Interview
                 from backend.models.email_template import EmailTemplate
                 
-                # Seed jobs
-                from scripts.seed_db_prod import seed_jobs, seed_interviews, seed_email_templates
+                # Seed all tables in correct order
+                from scripts.seed_db_prod import (
+                    seed_jobs, 
+                    seed_interviews, 
+                    seed_notes,
+                    seed_applications,
+                    seed_email_templates
+                )
                 jobs = seed_jobs(db)
-                seed_interviews(db, jobs)
+                interviews = seed_interviews(db, jobs)
+                seed_notes(db, jobs, interviews)
+                seed_applications(db, jobs)
                 seed_email_templates(db)
                 
                 logger.info("✅ Auto-seed completed successfully")
