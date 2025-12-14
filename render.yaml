@@ -1,0 +1,51 @@
+# Render Blueprint for Job Tracker Application
+# Deploy monorepo with backend (FastAPI) + frontend (Streamlit)
+
+services:
+  # Backend API Service
+  - type: web
+    name: job-tracker-backend
+    runtime: python
+    region: singapore  # Chọn region gần VN
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DEBUG
+        value: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: job-tracker-db
+          property: connectionString
+      - key: BACKEND_CORS_ORIGINS
+        value: '["https://job-tracker-frontend.onrender.com"]'
+      - key: API_V1_PREFIX
+        value: /api/v1
+    healthCheckPath: /
+    autoDeploy: true
+
+  # Frontend Streamlit Service
+  - type: web
+    name: job-tracker-frontend
+    runtime: python
+    region: singapore
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "streamlit run frontend/Home.py --server.port $PORT --server.address 0.0.0.0 --server.headless true"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: API_BASE_URL
+        value: https://job-tracker-backend.onrender.com
+      - key: API_V1_PREFIX
+        value: /api/v1
+    autoDeploy: true
+
+# Database
+databases:
+  - name: job-tracker-db
+    databaseName: job_tracker
+    plan: free
+    region: singapore

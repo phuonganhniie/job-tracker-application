@@ -3,6 +3,8 @@ Configuration settings for the application
 """
 from pydantic_settings import BaseSettings
 from typing import Optional
+import os
+import json
 
 
 class Settings(BaseSettings):
@@ -21,8 +23,21 @@ class Settings(BaseSettings):
     # API
     API_V1_PREFIX: str = "/api/v1"
     
-    # CORS
+    # CORS - Support both list and JSON string from env
     BACKEND_CORS_ORIGINS: list = ["http://localhost:8501", "http://localhost:3000"]
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Parse CORS origins if provided as JSON string
+        if isinstance(self.BACKEND_CORS_ORIGINS, str):
+            try:
+                self.BACKEND_CORS_ORIGINS = json.loads(self.BACKEND_CORS_ORIGINS)
+            except json.JSONDecodeError:
+                # Fallback to comma-separated values
+                self.BACKEND_CORS_ORIGINS = [
+                    origin.strip() 
+                    for origin in self.BACKEND_CORS_ORIGINS.split(",")
+                ]
     
     # Pagination
     DEFAULT_PAGE_SIZE: int = 20
