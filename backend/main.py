@@ -40,6 +40,41 @@ app.include_router(interviews.router, prefix=settings.API_V1_PREFIX)
 def startup_event():
     """Initialize database on startup"""
     init_db()
+    
+    # Auto-seed database if empty (first-time setup)
+    try:
+        from backend.core.database import SessionLocal
+        from backend.models.job import Job
+        import os
+        
+        db = SessionLocal()
+        job_count = db.query(Job).count()
+        db.close()
+        
+        # Only seed if database is empty AND AUTO_SEED is enabled
+        auto_seed = os.getenv("AUTO_SEED_DB", "false").lower() == "true"
+        
+        if job_count == 0 and auto_seed:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info("🌱 Database is empty, running auto-seed...")
+            
+            import subprocess
+            import sys
+            result = subprocess.run(
+                [sys.executable, "scripts/seed_db_prod.py"],
+                capture_output=True,
+                text=True
+            )
+            
+            if result.returncode == 0:
+                logger.info("✅ Auto-seed completed successfully")
+            else:
+                logger.warning(f"⚠️ Auto-seed failed: {result.stderr}")
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"⚠️ Auto-seed check failed: {e}")
 
 
 @app.get("/")

@@ -23,6 +23,8 @@ services:
         value: '["https://job-tracker-frontend.onrender.com"]'
       - key: API_V1_PREFIX
         value: /api/v1
+      - key: AUTO_SEED_DB
+        value: true
     healthCheckPath: /
     autoDeploy: true
 

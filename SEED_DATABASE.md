@@ -1,6 +1,6 @@
 # 🌱 SEED DATABASE ON RENDER
 
-Hướng dẫn seed dữ liệu mẫu vào database production trên Render.
+Hướng dẫn seed dữ liệu production vào database trên Render.
 
 ---
 
@@ -10,157 +10,162 @@ Database trên Render đã có tables nhưng **chưa có dữ liệu**. Frontend
 
 ---
 
-## ✅ Giải pháp: Chạy Seed Script
+## ✅ Giải pháp: Auto-Seed (Tự động)
 
-### **CÁCH 1: Dùng Render Shell (Khuyến nghị)** ⭐
+Backend đã được config để **tự động seed database** khi start lần đầu.
 
-1. **Vào Backend Service:**
-   - Login Render Dashboard: https://dashboard.render.com
-   - Click vào service `job-tracker-backend`
+### **Cách hoạt động:**
 
-2. **Mở Shell:**
-   - Click tab **"Shell"** (bên cạnh Logs, Metrics)
-   - Hoặc click **"Connect"** → **"Shell"**
+1. Backend start → Check database có data chưa
+2. Nếu database trống + `AUTO_SEED_DB=true` → Tự động chạy seed script
+3. Database được populate với production data
+4. Frontend sẽ hiển thị data ngay lập tức
 
-3. **Chạy seed script:**
-   ```bash
-   python scripts/seed_db_prod.py
-   ```
+### **Đã được enable trong `render.yaml`:**
 
-4. **Verify output:**
-   ```
-   🚀 Starting database seeding...
-   📊 Database: postgresql://...
-   📝 Seeding jobs...
-   ✅ Created 10 jobs
-   📝 Seeding interviews...
-   ✅ Created 2 interviews
-   📝 Seeding email templates...
-   ✅ Created 2 email templates
-   ✅ Database seeded successfully!
-   ```
+```yaml
+envVars:
+  - key: AUTO_SEED_DB
+    value: true  # ← Enable auto-seed
+```
 
-5. **Test:**
-   - Reload frontend: `https://your-frontend.onrender.com`
-   - Trang "Quản Lý Jobs" sẽ hiển thị 10 jobs
-   - Trang "Thống Kê" sẽ có charts
+### **Verify auto-seed hoạt động:**
 
----
+1. **Check Backend Logs trên Render:**
+   - Tab "Logs" trong backend service
+   - Tìm dòng:
+     ```
+     🌱 Database is empty, running auto-seed...
+     🚀 Starting database seeding...
+     ✅ Created 7 production jobs
+     ✅ Created 2 production interviews
+     ✅ Created 3 email templates
+     ✅ Auto-seed completed successfully
+     ```
 
-### **CÁCH 2: Dùng Render SSH (Nâng cao)**
-
-1. **Enable SSH:**
-   - Service Settings → SSH Public Key → Add your SSH key
-
-2. **Connect:**
-   ```bash
-   ssh <username>@<service-name>.onrender.com
-   ```
-
-3. **Run seed:**
-   ```bash
-   cd /opt/render/project/src
-   python scripts/seed_db_prod.py
-   ```
+2. **Test Frontend:**
+   - Mở: `https://your-frontend.onrender.com`
+   - Vào "Quản Lý Jobs" → thấy 7 jobs
+   - Vào "Thống Kê Tổng Quan" → thấy charts có data
 
 ---
 
-### **CÁCH 3: Dùng Custom Deploy Script**
+## 🔄 Manual Seed (Nếu cần)
 
-Nếu muốn tự động seed mỗi lần deploy:
+Nếu auto-seed không chạy hoặc muốn re-seed:
 
-1. **Update `render.yaml`:**
-   ```yaml
-   services:
-     - type: web
-       name: job-tracker-backend
-       buildCommand: "pip install -r requirements.txt && python scripts/init_db_prod.py && python scripts/seed_db_prod.py"
-   ```
+### **Cách 1: Trigger Redeploy**
 
-   ⚠️ **Lưu ý:** Cách này sẽ seed lại mỗi lần deploy → data duplicate!
+1. Vào Backend Service trên Render
+2. Click **"Manual Deploy"** → **"Clear build cache & deploy"**
+3. Backend sẽ redeploy và tự động seed (nếu DB vẫn trống)
 
-2. **Hoặc dùng Init Container (1 lần duy nhất):**
-   - Không khả dụng với Free tier
-   - Cần upgrade plan
+### **Cách 2: Dùng Build Command**
 
----
+Update `render.yaml` để seed trong build phase:
 
-## 🔄 Re-seed Database (Xóa và seed lại)
+```yaml
+buildCommand: "pip install -r requirements.txt && python scripts/seed_db_prod.py"
+```
 
-Nếu muốn **xóa data cũ** và seed lại từ đầu:
-
-1. **Mở file `scripts/seed_db_prod.py`**
-
-2. **Uncomment dòng:**
-   ```python
-   # clear_existing_data(db)  # ← Bỏ comment dòng này
-   ```
-
-3. **Commit & push:**
-   ```bash
-   git add scripts/seed_db_prod.py
-   git commit -m "feat: Enable clear data before seeding"
-   git push
-   ```
-
-4. **Chạy lại seed script** trên Render Shell
+⚠️ **Lưu ý:** Cách này sẽ seed lại mỗi lần deploy → có thể duplicate data
 
 ---
 
-## 📊 Data được seed
+## 📊 Production Data
 
-Script sẽ tạo:
+Script seed dữ liệu **thực tế cho sinh viên tốt nghiệp**:
 
 | Data Type | Count | Description |
 |-----------|-------|-------------|
-| **Jobs** | 10 | 3 Applied, 2 Screening, 2 Interview, 1 Offer, 1 Hired, 1 Rejected |
-| **Interviews** | 2 | Cho 2 jobs có status "Interview" |
-| **Email Templates** | 2 | Thank You Email, Application Follow-up |
+| **Jobs** | 7 | Realistic job applications with full details |
+| **Status Distribution** | - | 1 Applied, 1 Screening, 1 Interview, 2 Offers, 1 Rejected, 1 Withdrawn |
+| **Interviews** | 2 | 1 Scheduled (VNG), 1 Completed (Phone Screening) |
+| **Email Templates** | 3 | Professional templates for follow-up, thank you, acceptance |
+
+### **Job Details:**
+
+1. **VNG Corporation** (Interview) - Backend Engineer, TP.HCM, 25-40M
+2. **Tiki** (Screening) - Python Backend, TP.HCM, 20-35M
+3. **FPT Software** (Applied) - Junior Backend, Hà Nội, 12-18M
+4. **Shopee Vietnam** (Offer) - Backend Intern, TP.HCM, 8-12M
+5. **Momo** (Offer) - Software Engineer, TP.HCM, 15-25M
+6. **Base.vn** (Rejected) - Python Developer, Remote
+7. **KiotViet** (Withdrawn) - Backend Developer, TP.HCM
+
+### **Production-Ready Features:**
+
+- ✅ Realistic company names và job titles
+- ✅ Actual salary ranges cho từng level
+- ✅ Real locations (TP.HCM, Hà Nội)
+- ✅ Detailed job descriptions
+- ✅ Contact information (name, email, phone)
+- ✅ Interview details với location cụ thể
+- ✅ Notes với context thực tế
+- ✅ Timeline hợp lý (5-60 days ago)
+
+---
+
+## 🔧 Disable Auto-Seed
+
+Nếu không muốn auto-seed:
+
+1. **Update Backend env var trên Render:**
+   ```
+   AUTO_SEED_DB = false
+   ```
+
+2. **Hoặc remove khỏi `render.yaml`:**
+   ```yaml
+   # envVars:
+   #   - key: AUTO_SEED_DB
+   #     value: true  # ← Comment out hoặc xóa
+   ```
 
 ---
 
 ## 🐛 Troubleshooting
 
-### ❌ "Shell not available"
+### ❌ Auto-seed không chạy
 
-**Giải pháp:**
-- Free tier có giới hạn shell access
-- Dùng Render CLI thay thế:
-  ```bash
-  # Install Render CLI
-  npm install -g @render/cli
-  
-  # Login
-  render login
-  
-  # Connect to service
-  render ssh job-tracker-backend
-  
-  # Run seed
-  python scripts/seed_db_prod.py
-  ```
+**Nguyên nhân:**
+- Database đã có data (count > 0)
+- `AUTO_SEED_DB` không được set hoặc = false
 
-### ❌ "Permission denied"
+**Fix:**
+1. Check env var `AUTO_SEED_DB = true`
+2. Nếu DB đã có data, cần clear trước:
+   - Connect database trực tiếp
+   - Run: `DELETE FROM jobs; DELETE FROM interviews;`
+   - Redeploy backend
 
-**Giải pháp:**
-- Ensure bạn là owner/admin của service
-- Check file permissions: `chmod +x scripts/seed_db_prod.py`
+### ❌ "subprocess failed" error
 
-### ❌ "Module not found"
+**Nguyên nhân:**
+- Script path không đúng
+- Python dependencies chưa install
 
-**Giải pháp:**
-- Shell đang ở wrong directory
-- Run: `cd /opt/render/project/src`
-- Hoặc dùng absolute path: `python /opt/render/project/src/scripts/seed_db_prod.py`
+**Fix:**
+- Verify `scripts/seed_db_prod.py` exists in repo
+- Check build logs cho pip install errors
 
 ---
 
-## 🎓 Notes
+## 💡 Best Practices
 
-- **One-time operation:** Chỉ cần seed 1 lần sau khi deploy
-- **Safe to re-run:** Script không duplicate data (trừ khi uncomment clear_existing_data)
-- **Customize data:** Edit `scripts/seed_db_prod.py` để thêm/sửa sample data
+### **For Development:**
+- Use local seed script: `python scripts/seed_db.py`
+- Có nhiều data hơn để test
+
+### **For Production:**
+- Use auto-seed với minimal realistic data
+- Disable sau khi có real user data
+
+### **For Demo/Graduation Project:**
+- Keep auto-seed enabled
+- Data showcase được tính năng của app
+- Professional và có ý nghĩa
 
 ---
 
-**Good luck! 🚀**
+**No Shell access needed! Everything automatic! 🚀**
