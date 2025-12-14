@@ -44,8 +44,8 @@ def seed_jobs(db):
     jobs_data = [
         # ACTIVE APPLICATIONS (Đang theo dõi)
         {
-            "company": "VNG Corporation", 
-            "title": "Backend Engineer (Python)", 
+            "company_name": "VNG Corporation", 
+            "job_title": "Backend Engineer (Python)", 
             "location": "TP. Hồ Chí Minh", 
             "source": "LinkedIn", 
             "work_type": "Hybrid", 
@@ -55,14 +55,13 @@ def seed_jobs(db):
             "salary_max": 40000000,
             "url": "https://tuyendung.vng.com.vn/careers/backend-engineer-python",
             "description": "Phát triển backend services cho Zalo ecosystem. Stack: Python, FastAPI, PostgreSQL, Redis, Docker. Team size 8-10 người, Agile methodology.",
-            "priority": "High",
-            "contact_name": "Ms. Nguyễn Thu Hà",
+            "contact_person": "Ms. Nguyễn Thu Hà",
             "contact_email": "ha.nguyen@vng.com.vn",
             "contact_phone": "028-3939-0888"
         },
         {
-            "company": "Tiki", 
-            "title": "Python Backend Developer", 
+            "company_name": "Tiki", 
+            "job_title": "Python Backend Developer", 
             "location": "TP. Hồ Chí Minh", 
             "source": "TopCV", 
             "work_type": "Hybrid", 
@@ -72,14 +71,13 @@ def seed_jobs(db):
             "salary_max": 35000000,
             "url": "https://tuyendung.tiki.vn/job/python-backend-developer",
             "description": "Join Tiki Seller Platform team. Requirements: 2+ years Python, FastAPI/Django, MySQL. Build features cho seller dashboard và inventory management.",
-            "priority": "High",
-            "contact_name": "Mr. Trần Minh Quân",
+            "contact_person": "Mr. Trần Minh Quân",
             "contact_email": "quan.tran@tiki.vn",
             "contact_phone": "028-6268-8883"
         },
         {
-            "company": "FPT Software", 
-            "title": "Junior Backend Developer", 
+            "company_name": "FPT Software", 
+            "job_title": "Junior Backend Developer", 
             "location": "Hà Nội", 
             "source": "VietnamWorks", 
             "work_type": "Onsite", 
@@ -89,15 +87,14 @@ def seed_jobs(db):
             "salary_max": 18000000,
             "url": "https://fptsoftware.com/careers/junior-backend-developer",
             "description": "Fresher/Junior position cho Finance project. Outsourcing cho client Nhật Bản. Training included, good for new graduates.",
-            "priority": "Medium",
-            "contact_name": "Ms. Lê Thị Mai",
+            "contact_person": "Ms. Lê Thị Mai",
             "contact_email": "mai.le@fpt.com.vn"
         },
         
         # POSITIVE OUTCOMES (Kết quả tích cực)
         {
-            "company": "Shopee Vietnam", 
-            "title": "Backend Engineer Intern", 
+            "company_name": "Shopee Vietnam", 
+            "job_title": "Backend Engineer Intern", 
             "location": "TP. Hồ Chí Minh", 
             "source": "ITviec", 
             "work_type": "Onsite", 
@@ -107,15 +104,14 @@ def seed_jobs(db):
             "salary_max": 12000000,
             "url": "https://careers.shopee.vn/jobs/backend-engineer-intern",
             "description": "6-month internship program. Làm việc với Payment team. Convert to full-time possibility. Offer received: 10M/month + laptop + insurance.",
-            "priority": "High",
-            "contact_name": "Mr. Phạm Đức Anh",
+            "contact_person": "Mr. Phạm Đức Anh",
             "contact_email": "anh.pham@shopee.com",
             "contact_phone": "028-7300-9200",
             "notes": "Offer expires: 2025-12-20. Need to respond by then."
         },
         {
-            "company": "Momo", 
-            "title": "Software Engineer (Backend)", 
+            "company_name": "Momo", 
+            "job_title": "Software Engineer (Backend)", 
             "location": "TP. Hồ Chí Minh", 
             "source": "LinkedIn", 
             "work_type": "Hybrid", 
@@ -125,16 +121,15 @@ def seed_jobs(db):
             "salary_max": 25000000,
             "url": "https://momo.vn/careers/software-engineer-backend",
             "description": "Fintech product team. Python, FastAPI, PostgreSQL, Kafka. Great benefits package. Offer: 18M gross + 13th month + performance bonus.",
-            "priority": "High",
-            "contact_name": "Ms. Hoàng Thị Linh",
+            "contact_person": "Ms. Hoàng Thị Linh",
             "contact_email": "linh.hoang@momo.vn",
             "notes": "Best offer so far. Considering between Momo and Shopee."
         },
         
         # PAST APPLICATIONS (Lưu trữ)
         {
-            "company": "Base.vn", 
-            "title": "Python Developer", 
+            "company_name": "Base.vn", 
+            "job_title": "Python Developer", 
             "location": "Hà Nội", 
             "source": "TopCV", 
             "work_type": "Remote", 
@@ -144,12 +139,11 @@ def seed_jobs(db):
             "salary_max": 25000000,
             "url": "https://base.vn/tuyen-dung/python-developer",
             "description": "E-commerce platform. Remote work. Rejected after technical test - need to improve algorithm skills.",
-            "priority": "Low",
             "notes": "Feedback: Good Python knowledge but weak on data structures & algorithms. Should practice more on LeetCode."
         },
         {
-            "company": "KiotViet", 
-            "title": "Backend Developer", 
+            "company_name": "KiotViet", 
+            "job_title": "Backend Developer", 
             "location": "TP. Hồ Chí Minh", 
             "source": "CareerBuilder", 
             "work_type": "Hybrid", 
@@ -159,7 +153,6 @@ def seed_jobs(db):
             "salary_max": 20000000,
             "url": "https://www.kiotviet.vn/tuyen-dung/backend-developer",
             "description": "Retail management software. Withdrew application after receiving better offers.",
-            "priority": "Low",
             "notes": "Withdrew on 2025-11-05 to focus on Shopee and Momo opportunities."
         },
     ]
@@ -169,16 +162,22 @@ def seed_jobs(db):
         days_ago = job_data.pop("days_ago", 0)
         applied_date = date.today() - timedelta(days=days_ago)
         
-        # Extract optional fields
+        # Extract and map fields correctly
         url = job_data.pop("url", None)
         description = job_data.pop("description", None)
-        notes = job_data.pop("notes", None)
+        notes_text = job_data.pop("notes", None)  # Will be added later
+        contact_person = job_data.pop("contact_person", None)
+        contact_email = job_data.pop("contact_email", None)
+        contact_phone = job_data.pop("contact_phone", None)
         
         job = Job(
             **job_data,
             applied_date=applied_date,
             job_url=url,
-            job_description=description
+            job_description=description,
+            contact_person=contact_person,
+            contact_email=contact_email,
+            contact_phone=contact_phone
         )
         jobs.append(job)
     
@@ -199,7 +198,7 @@ def seed_interviews(db, jobs):
     logger.info("📝 Seeding production interviews...")
     
     # Find specific jobs for interviews
-    vng_job = next((j for j in jobs if j.company == "VNG Corporation"), None)
+    vng_job = next((j for j in jobs if j.company_name == "VNG Corporation"), None)
     
     if not vng_job:
         logger.info("⚠️ No jobs found for interviews, skipping")
