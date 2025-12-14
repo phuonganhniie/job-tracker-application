@@ -207,23 +207,25 @@ def seed_interviews(db, jobs):
     interviews_data = [
         {
             "job_id": vng_job.id,
+            "round_number": 2,
             "interview_type": "Technical Interview",
             "scheduled_date": datetime.now() + timedelta(days=3),
-            "duration_minutes": 90,
             "location": "VNG Campus, Tòa Z.06, Đường số 13, Tân Thuận Đông, Quận 7, TP.HCM",
-            "interviewer_name": "Mr. Nguyễn Văn Hoàng (Tech Lead)",
-            "status": "Scheduled",
-            "notes": "Round 2/3 - Technical deep dive. Topics: Python advanced, System Design, Database optimization. Prepare: FastAPI project demo, explain architecture decisions."
+            "interviewer_name": "Mr. Nguyễn Văn Hoàng",
+            "interviewer_title": "Tech Lead",
+            "preparation_notes": "Round 2/3 - Technical deep dive. Topics: Python advanced, System Design, Database optimization. Prepare: FastAPI project demo, explain architecture decisions.",
+            "result": "Pending"
         },
         {
             "job_id": vng_job.id,
+            "round_number": 1,
             "interview_type": "Phone Screening", 
             "scheduled_date": datetime.now() - timedelta(days=7),
-            "duration_minutes": 30,
             "location": "Phone Call",
-            "interviewer_name": "Ms. Nguyễn Thu Hà (HR)",
-            "status": "Completed",
-            "notes": "Round 1/3 - Passed. Discussed background, motivation, salary expectation. Next: Technical interview with team lead."
+            "interviewer_name": "Ms. Nguyễn Thu Hà",
+            "interviewer_title": "HR Manager",
+            "feedback": "Round 1/3 - Passed. Discussed background, motivation, salary expectation. Next: Technical interview with team lead.",
+            "result": "Passed"
         },
     ]
     
