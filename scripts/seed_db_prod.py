@@ -228,6 +228,22 @@ def seed_interviews(db, jobs):
         },
     ]
     
+    # Create Interview objects
+    interviews = []
+    for data in interviews_data:
+        interview = Interview(**data)
+        interviews.append(interview)
+    
+    db.add_all(interviews)
+    db.commit()
+    
+    # Refresh all interviews to get their IDs
+    for interview in interviews:
+        db.refresh(interview)
+    
+    logger.info(f"✅ Created {len(interviews)} production interviews")
+    return interviews
+    
     interviews = []
     for interview_data in interviews_data:
         interview = Interview(**interview_data)
