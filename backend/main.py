@@ -46,31 +46,42 @@ def startup_event():
         from backend.core.database import SessionLocal
         from backend.models.job import Job
         import os
+        import logging
         
+        logger = logging.getLogger(__name__)
         db = SessionLocal()
         job_count = db.query(Job).count()
-        db.close()
         
         # Only seed if database is empty AND AUTO_SEED is enabled
-        auto_seed = os.getenv("AUTO_SEED_DB", "false").lower() == "true"
+        auto_seed = os.getenv("AUTO_SEED_DB", "true").lower() == "true"
         
         if job_count == 0 and auto_seed:
-            import logging
-            logger = logging.getLogger(__name__)
             logger.info("🌱 Database is empty, running auto-seed...")
             
-            import subprocess
-            import sys
-            result = subprocess.run(
-                [sys.executable, "scripts/seed_db_prod.py"],
-                capture_output=True,
-                text=True
-            )
-            
-            if result.returncode == 0:
+            # Import and run seed inline instead of subprocess
+            try:
+                from datetime import date, datetime, timedelta
+                from backend.models.interview import Interview
+                from backend.models.email_template import EmailTemplate
+                
+                # Seed jobs
+                from scripts.seed_db_prod import seed_jobs, seed_interviews, seed_email_templates
+                jobs = seed_jobs(db)
+                seed_interviews(db, jobs)
+                seed_email_templates(db)
+                
                 logger.info("✅ Auto-seed completed successfully")
-            else:
-                logger.warning(f"⚠️ Auto-seed failed: {result.stderr}")
+            except Exception as seed_error:
+                logger.error(f"⚠️ Auto-seed failed: {seed_error}")
+                import traceback
+                traceback.print_exc()
+        else:
+            if job_count > 0:
+                logger.info(f"ℹ️ Database already has {job_count} jobs, skipping auto-seed")
+            if not auto_seed:
+                logger.info("ℹ️ AUTO_SEED_DB is disabled")
+        
+        db.close()
     except Exception as e:
         import logging
         logger = logging.getLogger(__name__)
