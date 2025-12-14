@@ -361,9 +361,10 @@ def seed_email_templates(db):
     
     templates = [
         EmailTemplate(
-            name="Thank You After Interview",
+            template_name="Thank You After Interview",
+            template_type="follow_up",
             subject="Thank you for the interview - {job_title} position",
-            body_template="""Dear {interviewer_name},
+            body="""Dear {interviewer_name},
 
 Thank you for taking the time to interview me for the {job_title} position at {company} on {interview_date}.
 
@@ -375,12 +376,13 @@ Please let me know if you need any additional information. I look forward to hea
 
 Best regards,
 {your_name}""",
-            category="follow_up"
+            variables='{"interviewer_name": "Interviewer name", "job_title": "Job title", "company": "Company name", "interview_date": "Interview date", "specific_topic": "Topic discussed", "project_name": "Project name", "relevant_skills": "Your skills", "your_name": "Your name"}'
         ),
         EmailTemplate(
-            name="Application Status Follow-up",
+            template_name="Application Status Follow-up",
+            template_type="follow_up",
             subject="Following up on {job_title} application",
-            body_template="""Dear {recruiter_name},
+            body="""Dear {recruiter_name},
 
 I hope this email finds you well.
 
@@ -396,12 +398,13 @@ Best regards,
 {your_name}
 {your_email}
 {your_phone}""",
-            category="follow_up"
+            variables='{"recruiter_name": "Recruiter name", "job_title": "Job title", "company": "Company name", "applied_date": "Application date", "key_skills": "Your key skills", "your_name": "Your name", "your_email": "Your email", "your_phone": "Your phone"}'
         ),
         EmailTemplate(
-            name="Offer Acceptance",
+            template_name="Offer Acceptance",
+            template_type="acceptance",
             subject="Acceptance of {job_title} Offer",
-            body_template="""Dear {recruiter_name},
+            body="""Dear {recruiter_name},
 
 I am delighted to formally accept the offer for the {job_title} position at {company}.
 
@@ -417,7 +420,7 @@ Thank you once again for this opportunity.
 
 Best regards,
 {your_name}""",
-            category="acceptance"
+            variables='{"recruiter_name": "Recruiter name", "job_title": "Job title", "company": "Company name", "start_date": "Start date", "salary_amount": "Salary amount", "benefits_summary": "Benefits summary", "your_name": "Your name"}'
         ),
     ]
     
