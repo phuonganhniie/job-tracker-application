@@ -39,6 +39,7 @@ Job Tracker là giải pháp toàn diện cho việc theo dõi các đơn ứng 
 ## 🛠️ Tech Stack
 
 ### Backend
+
 - **Framework**: FastAPI 0.104+
 - **ORM**: SQLAlchemy 2.0+
 - **Validation**: Pydantic 2.0+
@@ -46,19 +47,29 @@ Job Tracker là giải pháp toàn diện cho việc theo dõi các đơn ứng 
 - **Migration**: Alembic
 
 ### Frontend
+
 - **Framework**: Streamlit 1.28+
 - **HTTP Client**: requests
 - **Data Processing**: pandas
 - **Charts**: Built-in Streamlit charts
 
 ### DevOps
+
 - **Testing**: pytest
 - **Code Quality**: black, flake8, mypy
 - **Containerization**: Docker (optional)
 
 ## 🚀 Cài đặt và chạy
 
+## ⚡ Quick Start (TL;DR)
+
 > **⚠️ Yêu cầu:** Python 3.11+ (khuyến nghị Python 3.11 để đảm bảo ổn định khi cài đặt dependencies)
+
+**Khuyến nghị thêm:**
+
+- Node.js >= 18
+- npm hoặc yarn
+- Git
 
 ### 1. Clone repository
 
@@ -125,6 +136,7 @@ pip install -r requirements.txt
 ### 3. Cấu hình environment
 
 #### macOS / Linux:
+
 ```bash
 # Copy file .env.example thành .env
 cp .env.example .env
@@ -134,6 +146,7 @@ nano .env  # hoặc vim, code, etc.
 ```
 
 #### Windows (PowerShell):
+
 ```powershell
 # Copy file .env.example thành .env
 Copy-Item .env.example .env
@@ -143,6 +156,7 @@ notepad .env  # hoặc code .env
 ```
 
 #### Windows (Git Bash):
+
 ```bash
 # Copy file .env.example thành .env
 cp .env.example .env
@@ -154,6 +168,7 @@ notepad .env  # hoặc vim, code .env
 ### 4. Khởi tạo database
 
 #### macOS / Linux:
+
 ```bash
 # Tạo database và tables
 python scripts/init_db.py
@@ -163,6 +178,7 @@ python scripts/seed_db.py
 ```
 
 #### Windows (PowerShell):
+
 ```powershell
 # Tạo database và tables
 .\venv\Scripts\python.exe scripts/init_db.py
@@ -172,6 +188,7 @@ python scripts/seed_db.py
 ```
 
 #### Windows (Git Bash):
+
 ```bash
 # Tạo database và tables
 python scripts/init_db.py
@@ -183,27 +200,32 @@ python scripts/seed_db.py
 ### 5. Chạy Backend API
 
 #### macOS / Linux:
+
 ```bash
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 #### Windows (PowerShell):
+
 ```powershell
 .\venv\Scripts\python.exe -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 #### Windows (Git Bash):
+
 ```bash
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Backend sẽ chạy tại: `http://localhost:8000`
+
 - API Docs (Swagger): `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
 ### 6. Chạy Frontend (Mở terminal mới)
 
 #### macOS / Linux:
+
 ```bash
 # Đảm bảo venv đã được kích hoạt
 source venv/bin/activate
@@ -213,6 +235,7 @@ streamlit run frontend/Home.py
 ```
 
 #### Windows (PowerShell):
+
 ```powershell
 # Đảm bảo venv đã được kích hoạt
 .\venv\Scripts\Activate.ps1
@@ -222,6 +245,7 @@ streamlit run frontend/Home.py
 ```
 
 #### Windows (Git Bash):
+
 ```bash
 # Đảm bảo venv đã được kích hoạt
 source venv/Scripts/activate
@@ -235,21 +259,25 @@ Frontend sẽ chạy tại: `http://localhost:8501`
 ### 🔧 Troubleshooting
 
 #### Python không tìm thấy hoặc sai phiên bản
+
 - **macOS/Linux**: Thử `python3.11 --version` hoặc cài Python 3.11 từ [python.org](https://www.python.org/downloads/)
 - **Windows**: Tải Python 3.11 từ [python.org](https://www.python.org/downloads/windows/) và đảm bảo chọn "Add Python to PATH" khi cài đặt
 
 #### PowerShell ExecutionPolicy Error
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 #### Module not found errors
+
 ```bash
 # Đảm bảo virtual environment đã được kích hoạt và cài lại dependencies
 pip install -r requirements.txt
 ```
 
 #### Port đã được sử dụng
+
 - Đổi port khác: `--port 8001` cho backend hoặc `--server.port 8502` cho frontend
 
 ## 🧪 Testing
@@ -277,13 +305,16 @@ MIT License - see LICENSE file for details
 ## 🎯 Roadmap
 
 ### Phase 1 ✅ (Completed)
+
 - [x] Database design & ERD
 - [x] Backend API (Jobs, Analytics)
 - [x] Frontend (Dashboard, Jobs Management)
 - [x] Basic CRUD operations for Jobs
 
 ### Phase 2 🚧 (Current)
+
 **Focus: Core features completion**
+
 - [ ] Frontend: Edit & Delete UI for Jobs
 - [ ] Backend API: Interviews CRUD
 - [ ] Frontend: Interviews Management Page
@@ -291,18 +322,22 @@ MIT License - see LICENSE file for details
 - [ ] Frontend: Email Templates Management Page
 
 **Out of scope for Phase 2:**
+
 - ❌ Applications API (status already tracked in Job model)
 - ❌ Notes API (moved to Phase 3)
 - ❌ Email sending functionality (moved to Phase 3)
 
 ### Phase 3 📅 (Future enhancements)
+
 **Advanced Features:**
+
 - [ ] Notes system (API + UI for job/interview notes)
 - [ ] Email integration (send emails from templates)
 - [ ] Advanced analytics & reports
 - [ ] Export reports (PDF, Excel)
 
 **Enterprise Features:**
+
 - [ ] User authentication & authorization
 - [ ] Multi-user support
 - [ ] Calendar integration (Google Calendar)
@@ -326,6 +361,8 @@ MIT License - see LICENSE file for details
 ---
 
 **Built with ❤️ by Team 13 - UIT CN1.K2025 - Lap Trinh Python**
+
 ## 👨‍💻 Contributor Note
+
 Một số cải thiện nhỏ về tài liệu đã được thêm vào
 nhằm giúp project dễ đọc và dễ tiếp cận hơn cho người mới.
