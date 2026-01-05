@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.core.config import settings
 from backend.core.database import init_db
-from backend.api.v1 import jobs, analytics
+from backend.api.v1 import jobs, analytics, interviews
 
 # Import all models to ensure relationships are registered
 import backend.models  # noqa: F401
@@ -31,8 +31,9 @@ app.add_middleware(
 # Include routers
 app.include_router(jobs.router, prefix=settings.API_V1_PREFIX)
 app.include_router(analytics.router, prefix=settings.API_V1_PREFIX)
+app.include_router(interviews.router, prefix=settings.API_V1_PREFIX)
 
-# TODO: Add other routers (applications, interviews, notes, email_templates)
+# TODO: Add other routers (applications, notes, email_templates)
 
 
 @app.on_event("startup")

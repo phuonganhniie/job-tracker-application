@@ -252,27 +252,6 @@ pip install -r requirements.txt
 #### Port đã được sử dụng
 - Đổi port khác: `--port 8001` cho backend hoặc `--server.port 8502` cho frontend
 
-## 📚 API Endpoints
-
-### Jobs
-- `POST /api/v1/jobs/` - Tạo job mới
-- `GET /api/v1/jobs/` - Lấy danh sách jobs (có filter & pagination)
-- `GET /api/v1/jobs/{id}` - Lấy chi tiết job
-- `PUT /api/v1/jobs/{id}` - Cập nhật job
-- `PATCH /api/v1/jobs/{id}/status` - Cập nhật trạng thái job
-- `DELETE /api/v1/jobs/{id}` - Xóa job
-- `GET /api/v1/jobs/search/{keyword}` - Tìm kiếm jobs
-
-### Analytics
-- `GET /api/v1/analytics/` - Lấy báo cáo analytics đầy đủ
-- `GET /api/v1/analytics/summary` - Thống kê tổng quan
-- `GET /api/v1/analytics/by-status` - Thống kê theo trạng thái
-- `GET /api/v1/analytics/by-source` - Thống kê theo nguồn
-- `GET /api/v1/analytics/timeline` - Timeline data
-
-### TODO: Các endpoints khác
-- Applications, Interviews, Notes, Email Templates (tương tự)
-
 ## 🧪 Testing
 
 ```powershell
@@ -286,44 +265,6 @@ pytest
 pytest --cov=backend tests/
 ```
 
-## 📝 Development
-
-### Code formatting
-
-```powershell
-# Format code with black
-black backend/ frontend/
-
-# Lint with flake8
-flake8 backend/
-
-# Type check with mypy
-mypy backend/
-```
-
-### Database migrations (Alembic)
-
-```powershell
-# Generate migration
-alembic revision --autogenerate -m "Description"
-
-# Apply migration
-alembic upgrade head
-
-# Rollback
-alembic downgrade -1
-```
-
-## 🐳 Docker (Optional)
-
-```powershell
-# Build and run with docker-compose
-docker-compose up --build
-
-# Stop
-docker-compose down
-```
-
 ## 📄 License
 
 MIT License - see LICENSE file for details
@@ -335,26 +276,39 @@ MIT License - see LICENSE file for details
 
 ## 🎯 Roadmap
 
-### Phase 1 (Current) ✅
+### Phase 1 ✅ (Completed)
 - [x] Database design & ERD
 - [x] Backend API (Jobs, Analytics)
-- [x] Frontend (Dashboard, Jobs)
-- [x] Basic CRUD operations
+- [x] Frontend (Dashboard, Jobs Management)
+- [x] Basic CRUD operations for Jobs
 
-### Phase 2 (Next) 🚧
-- [ ] Complete all API endpoints (Applications, Interviews, Notes, Email Templates)
-- [ ] Complete all frontend pages
-- [ ] Advanced search & filters
-- [ ] Email integration (send emails)
+### Phase 2 🚧 (Current)
+**Focus: Core features completion**
+- [ ] Frontend: Edit & Delete UI for Jobs
+- [ ] Backend API: Interviews CRUD
+- [ ] Frontend: Interviews Management Page
+- [ ] Backend API: Email Templates CRUD
+- [ ] Frontend: Email Templates Management Page
 
-### Phase 3 (Future) 📅
+**Out of scope for Phase 2:**
+- ❌ Applications API (status already tracked in Job model)
+- ❌ Notes API (moved to Phase 3)
+- ❌ Email sending functionality (moved to Phase 3)
+
+### Phase 3 📅 (Future enhancements)
+**Advanced Features:**
+- [ ] Notes system (API + UI for job/interview notes)
+- [ ] Email integration (send emails from templates)
+- [ ] Advanced analytics & reports
+- [ ] Export reports (PDF, Excel)
+
+**Enterprise Features:**
 - [ ] User authentication & authorization
 - [ ] Multi-user support
 - [ ] Calendar integration (Google Calendar)
-- [ ] Export reports (PDF, Excel)
 - [ ] Mobile responsive UI
 - [ ] Notification system
-- [ ] AI-powered insights
+- [ ] AI-powered insights & recommendations
 
 ## 🐛 Known Issues
 
