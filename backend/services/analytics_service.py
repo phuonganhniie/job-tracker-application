@@ -10,6 +10,22 @@ from backend.models.job import Job
 from backend.models.application import Application
 from backend.models.interview import Interview
 from backend.utils.constants import JobStatus, PIPELINE_ORDER
+from backend.core.database import engine
+
+
+def format_date_to_period(date_column):
+    """
+    Format date column to 'YYYY-MM' period string.
+    Works with both SQLite and PostgreSQL.
+    """
+    db_type = engine.dialect.name
+    
+    if db_type == 'postgresql':
+        # PostgreSQL: to_char(date, 'YYYY-MM')
+        return func.to_char(date_column, 'YYYY-MM')
+    else:
+        # SQLite: strftime('%Y-%m', date)
+        return func.strftime('%Y-%m', date_column)
 
 
 class AnalyticsService:
@@ -132,21 +148,21 @@ class AnalyticsService:
             })
         
         job_timeline = db.query(
-            func.strftime('%Y-%m', Job.applied_date).label('period'),
+            format_date_to_period(Job.applied_date).label('period'),
             func.count(Job.id).label('applications'),
             func.sum(case((Job.current_status == JobStatus.REJECTED.value, 1), else_=0)).label('rejected'),
             func.sum(case((Job.current_status == JobStatus.OFFER.value, 1), else_=0)).label('offers'),
             func.sum(case((Job.current_status == JobStatus.HIRED.value, 1), else_=0)).label('hired')
         ).filter(
             Job.applied_date >= statistics[0]['month_start_date']
-        ).group_by(func.strftime('%Y-%m', Job.applied_date)).all()
+        ).group_by(format_date_to_period(Job.applied_date)).all()
         
         interview_timeline = db.query(
-            func.strftime('%Y-%m', Interview.scheduled_date).label('period'),
+            format_date_to_period(Interview.scheduled_date).label('period'),
             func.count(Interview.id).label('interviews')
         ).filter(
             Interview.scheduled_date >= statistics[0]['month_start']
-        ).group_by(func.strftime('%Y-%m', Interview.scheduled_date)).all()
+        ).group_by(format_date_to_period(Interview.scheduled_date)).all()
         
         job_dict = {getattr(row, 'period', ''): row for row in job_timeline}
         interview_dict = {getattr(row, 'period', ''): row for row in interview_timeline}

@@ -40,6 +40,60 @@ app.include_router(interviews.router, prefix=settings.API_V1_PREFIX)
 def startup_event():
     """Initialize database on startup"""
     init_db()
+    
+    # Auto-seed database if empty (first-time setup)
+    try:
+        from backend.core.database import SessionLocal
+        from backend.models.job import Job
+        import os
+        import logging
+        
+        logger = logging.getLogger(__name__)
+        db = SessionLocal()
+        job_count = db.query(Job).count()
+        
+        # Only seed if database is empty AND AUTO_SEED is enabled
+        auto_seed = os.getenv("AUTO_SEED_DB", "true").lower() == "true"
+        
+        if job_count == 0 and auto_seed:
+            logger.info("🌱 Database is empty, running auto-seed...")
+            
+            # Import and run seed inline instead of subprocess
+            try:
+                from datetime import date, datetime, timedelta
+                from backend.models.interview import Interview
+                from backend.models.email_template import EmailTemplate
+                
+                # Seed all tables in correct order
+                from scripts.seed_db_prod import (
+                    seed_jobs, 
+                    seed_interviews, 
+                    seed_notes,
+                    seed_applications,
+                    seed_email_templates
+                )
+                jobs = seed_jobs(db)
+                interviews = seed_interviews(db, jobs)
+                seed_notes(db, jobs, interviews)
+                seed_applications(db, jobs)
+                seed_email_templates(db)
+                
+                logger.info("✅ Auto-seed completed successfully")
+            except Exception as seed_error:
+                logger.error(f"⚠️ Auto-seed failed: {seed_error}")
+                import traceback
+                traceback.print_exc()
+        else:
+            if job_count > 0:
+                logger.info(f"ℹ️ Database already has {job_count} jobs, skipping auto-seed")
+            if not auto_seed:
+                logger.info("ℹ️ AUTO_SEED_DB is disabled")
+        
+        db.close()
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"⚠️ Auto-seed check failed: {e}")
 
 
 @app.get("/")

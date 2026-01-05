@@ -1,10 +1,12 @@
 """
 Frontend settings
 """
+import os
 
 # API Configuration
-API_BASE_URL = "http://localhost:8000"
-API_V1_PREFIX = "/api/v1"
+# Support environment variable for production deployment
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
+API_V1_PREFIX = os.getenv("API_V1_PREFIX", "/api/v1")
 API_URL = f"{API_BASE_URL}{API_V1_PREFIX}"
 
 # Pagination
